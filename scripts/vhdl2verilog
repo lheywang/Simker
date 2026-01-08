@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Declare a function to add a message :
+function usage()
+{
+  echo "vhdl2verilog"
+  echo "Convert a vhdl code into a logically equivalent one, in verilog."
+  echo ""
+  echo "Usage : vhdl2verilog input"
+  echo ""
+  echo "input : the source vhdl file"
+  echo ""
+  echo "output file is named the same as vhdl, except the extension that has been changed."
+}
+
+# First, count the arguments provided :
+if [ "$#" -ne "1" ] || ! [ -f "$1" ]; then
+  usage
+
+  # This element is actually an "easter egg" when your command is not working, you can check what was passed to it :)
+  if [ "$2" = "--debug" ]; then
+    echo "arg 1 : $1"
+    echo "arg 2 : $2"
+    echo "arg 3 : $3"
+  fi
+  exit 1
+fi
+
+# Prepare the output file name :
+entity="${1%.vhd}"
+output="${entity}.v"
+
+# Set a variable for the work folder
+work=/tmp/vhdl2verilog/${entity}
+mkdir -p "${work}"
+
+# Adding some logs
+echo "Got entity = ${entity}"
+echo "Created output file as ${output}"
+echo "Using work folder as : ${work}"
+
+# Run the conversion :
+echo "" >> "${output}"
+
+ghdl -i    --std=93 --work="${entity}" --workdir="${work}" -P"${work}"                         *.vhd
+ghdl -m    --std=93 --work="${entity}" --workdir="${work}" -P"${work}" -o "${work}/${entity}"  "${entity}"
+ghdl synth --std=93 --work="${entity}" --workdir="${work}" -P"${work}" --out=verilog           "${entity}" >> "${output}"
+
+# Final messages
+echo "Runned conversion from $1 to ${output} files."

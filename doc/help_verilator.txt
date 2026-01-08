@@ -1,0 +1,32 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : VERILATOR                                                       %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% Verilator is a Verilog / SystemVerilog simulator, which can be used in      %
+%  different flavors : As a standalone simulator, or within the ngspice       %
+%  cosim feature.                                                             %
+%                                                                             %
+% It's actually one of the fastest simulator available for theses languages.  %
+%  Behind the scene, the design is compiled into C++ code.                    %
+%                                                                             %
+% There's plenty of doc on the official website :                             %
+%  https://verilator.org/guide/latest/                                        %
+%                                                                             %
+% And, one of the greatest feature I think is the C++ testbench :             %
+%  You can write RTL testbench in C++, which enable testing the outputs in    %
+%  live, and thus, get far higher coverage than basic testing by hand.        %
+%  For example, you can easily think about simulating a multiplier and        %
+%  more than 1000 cases, automatically !                                      %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

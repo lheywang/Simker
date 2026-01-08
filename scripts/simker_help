@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# See if the requested help menu is known, or not  
+if [ "$1" = "ngspice" ]; then
+  cat /tools/doc/help_ngspice.txt
+  exit 0
+fi
+
+if [ "$1" = "ghdl" ]; then
+  cat /tools/doc/help_ghdl.txt
+  exit 0
+fi
+
+if [ "$1" = "verilator" ]; then
+  cat /tools/doc/help_verilator.txt
+  exit 0
+fi
+
+if [ "$1" = "openvaf" ] || [ "$1" = "openvaf-r" ]; then
+  cat /tools/doc/help_openvafr.txt
+  exit 0
+fi
+
+if [ "$1" = "gtkwave" ]; then
+  cat /tools/doc/help_gtkwave.txt
+  exit 0
+fi
+
+if [ "$1" = "gaw" ] || [ "$1" = "gaw3" ]; then
+  cat /tools/doc/help_gaw.txt
+  exit 0
+fi
+
+if [ "$1" = "xschem" ]; then
+  cat /tools/doc/help_xschem.txt
+  exit 0
+fi
+
+if [ "$1" = "versions" ]; then
+  cat /tools/doc/versions.txt
+  exit 0
+fi
+
+# If not, show the default help page : 
+cat /tools/doc/help.txt
+exit 0

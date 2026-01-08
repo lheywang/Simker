@@ -1,0 +1,53 @@
+* Mixed-signal simulation: clk_div + counter
+.control
+  pre_osdi ./driver.osdi
+.endc
+
+* --- 1. BRIDGE MODELS ---
+.model a2d adc_bridge(in_low=0.4 in_high=0.8)
+.model d2a dac_bridge(out_low=0.0 out_high=1.0)
+
+* --- 2. ANALOG SOURCES ---
+Vclk clk_a 0 PULSE(0 1 0 1n 1n 100n 200n)
+Vrst rst_a 0 PWL(0 0 450n 0 451n 1)
+
+* --- 3. INPUT BRIDGES (Analog to Digital) ---
+abridge_in [clk_a rst_a] [clk_d rst_d] a2d
+
+* --- 4. DIGITAL COSIM INSTANCE ---
+* Removed 'null', using digital nodes (suffix _d)
+Atop [clk_d rst_d] [q3_d q2_d q1_d q0_d] top
+.model top d_cosim simulation="./top.so"
+
+* --- 5. OUTPUT BRIDGES (Digital to Analog) ---
+* This converts digital states to 0V/5V so the VA driver has an input
+abridge_out0 [q0_d] [q0_a] d2a
+abridge_out1 [q1_d] [q1_a] d2a
+abridge_out2 [q2_d] [q2_a] d2a
+abridge_out3 [q3_d] [q3_a] d2a
+
+* --- 6. ANALOG DRIVERS & LOADS ---
+.Model driver_model driver_va
+.subckt driver in out
+  Ndriver in out driver_model
+.ends
+
+xdrv0 q0_a o0 driver
+xdrv1 q1_a o1 driver
+xdrv2 q2_a o2 driver
+xdrv3 q3_a o3 driver
+
+Rload0 o0 0 1k
+Rload1 o1 0 1k
+Rload2 o2 0 1k
+Rload3 o3 0 1k
+
+* --- 7. SIMULATION ---
+.tran 10n 15u
+
+.control
+  run
+  * Plot the analog clock and the final driver outputs
+  plot v(clk_a) v(o3)+24 v(o2)+18 v(o1)+12 v(o0)+6 v(rst_a)-6
+.endc
+.end

@@ -1,0 +1,33 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : GHDL                                                            %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% GHDL is an open-source VHDL simulator for version 1987, 1993 and 2002.      %
+%  It can be used to simulate VHDL designs (no max size here, since this      % 
+%  version is based on GCC 12.5 backend), and with gtkwave you can see the    %
+%  output waveforms.                                                          %
+%                                                                             %
+% You may find a lot of ressources here :                                     %
+%  https://ghdl-rad.readthedocs.io/en/latest/examples/quick_start/README.html %
+%                                                                             %
+% For a basic usage, you can type theses commands :                           %
+%  > ghdl -a [file.vhd / file.vhdl]                                           %
+%  > ghdl -e [entity name]                                                    %
+%  > ghdl -r [entity name]                                                    %
+%                                                                             %
+% There's a lot of other options, for more advanced users to compile larger   %
+%  designs, or with advanced options. All of theses are explained on the      %
+%  help page, that I won't copy here, for obvious reasons !                   %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

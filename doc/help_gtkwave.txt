@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : GTKWAVE                                                         %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% GTKWAVE is a digital waveform viewer, mostly for RTL designs (VHDL /        %
+%  Verilog).                                                                  %
+%                                                                             %
+% Thus, it could be used with Verilator or GHDL, depending on the source      %
+%  language.                                                                  %
+%  It support different outputs formats : .ghw from GHDL, and .vcd from       %
+%  verilator.                                                                 %
+%                                                                             %
+% It's documentation could be found here :                                    %
+%  https://gtkwave.github.io/gtkwave/                                         %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

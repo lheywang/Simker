@@ -1,0 +1,39 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : OPENVAF-R                                                       %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% OpenVaf-R is a newer version of the OpenVaf compiler.                       %
+%  It's job is to compile VerilogA files (.va) into .osdi ones, which can     %
+%  then be included into the analog matrix of a SPICE simulator, here         %
+%  ngspice.                                                                   %
+%                                                                             %
+% It's usage is not complicated :                                             %
+%  > openvaf-r file.va                                                        %
+%                                                                             %
+% And, then you include the model into the netlist :                          %
+%  .control                                                                   %
+%    pre_osdi file.osdi                                                       %
+%  .endc                                                                      %
+%  ...                                                                        %
+%  .Model [model name] [verilogA module name]                                 %
+%  N[xxx] [ports ... ] [model name]                                           %
+%                                                                             %
+% If needed, there's example in the /examples directory, with some verilogA   %
+%  models involved.                                                           %
+%                                                                             %
+% There's not a lot of public doc, so here the github repo :                  %
+%  https://github.com/OpenVAF/OpenVAF-Reloaded                                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 

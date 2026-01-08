@@ -1,0 +1,36 @@
+#!/bin/bash
+
+output="/tools/doc/versions.txt"
+
+function sep()
+{
+  echo "============================================================================" >> "${output}"
+}
+
+# First, get the header on the file :
+touch "${output}"
+
+# Add some data on it :
+sep
+echo "" >> "${output}"
+echo "Versions of software on :" >> "${output}"
+printf '%(%Y-%m-%d %H:%M:%S)T\n' -1 >> "${output}"
+echo "" >> "${output}"
+sep
+
+# Add tools versions :
+gcc --version >> "${output}"
+sep
+ngspice --version >> "${output}"
+sep
+verilator --version >> "${output}"
+sep
+ghdl --version >> "${output}"
+sep
+openvaf-r --version >> "${output}"
+sep
+gtkwave --version >> "${output}"
+sep
+gaw --version >> "${output}"
+sep
+xschem --version >> "${output}"

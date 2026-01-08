@@ -1,0 +1,19 @@
+# .gitignore
+
+# Pyverilog outputs
+*.out
+*parsetab.py 
+
+# Wrappergen outputs
+*.v
+*.va
+*.vhd
+
+# Netlists
+*.cir
+
+# Symbols
+*.sym
+
+# Add the example folders
+!/examples/mixed_sim/*

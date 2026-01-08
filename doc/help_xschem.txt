@@ -1,0 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : XSCHEM                                                          %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% XSCHEM is an open-source schematic capture tool. You can use it, with the   %
+%  other tools to simplify the schematic capture rather than writting netlist %
+%                                                                             %
+% There's plenty of documation available on the manual :                      %
+%  https://xschem.sourceforge.io/stefan/xschem_man/xschem_man.pdf             %
+%                                                                             %
+% With the docker provided scripts, you can simplify the management of a lot  %
+%  of procedure. For example, there's scripts to generate the .sym generation %
+%  for digital logic, while combinating them into an higher level entity.     %
+%  You can see the help pages related to it ! (help wrappergen)               %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

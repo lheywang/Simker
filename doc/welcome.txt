@@ -1,0 +1,41 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%           ________  __     ___      ___  __   ___  _______   _______        %       
+%         /"       )|" \   |"  \    /"  ||/"| /  ")/"     "| /"      \        %
+%        (:   \___/ ||  |   \   \  //   |(: |/   /(: ______)|:        |       %
+%         \___  \   |:  |   /\\  \/.    ||    __/  \/    |  |_____/   )       %
+%          __/  \\  |.  |  |: \.        |(// _  \  // ___)_  //      /        %
+%         /" \   :) /\  |\ |.  \    /:  ||: | \  \(:      "||:  __   \        %
+%        (_______/ (__\_|_)|___|\__/|___|(__|  \__)\_______)|__|  \___)       %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% Welcome on the SIMKER Docker container. You can now begin creatin           %
+%   electronics for tomorrow !                                                %
+%                                                                             %
+% There's plenty of tools built-in, such as :                                 %
+%   - SPICE simulator :                      NGSPICE                          %
+%   - VHDL simulator :                       GHDL                             %
+%   - Verilog / SystemVerilog simulator :    VERILATOR                        %
+%   - VerilogA :                             OPENVAF-R                        %
+%   - Digital waveform viewer :              GTKWAVE                          %
+%   - Analog waveform viewer :               GAW                              %
+%   - Schematic capture :                    XSCHEM                           %
+%                                                                             %
+% But that's not all ! There's also some usefull scripts, also included !     %
+%  - vhdl2verilog :                          Convert a VHDL file into a       %
+%                                              verilog one !                  %
+%  - To be completed !                                                        %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% All of the tools can be used from that command line input. And, if you need %
+%  some help, you can always type "simker" to show this message, as           %
+%  well as simker_help [tool name] to get more specific help !                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% Leonard HEYWANG <leonard.heywang@proton.me>                                 %
+%   03/01/2026                                                                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

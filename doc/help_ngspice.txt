@@ -1,0 +1,40 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : NGSPICE                                                         %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% Ngspice is a SPICE engine, built from Berkeley. While, as most SPICE        %
+%  it does mostly work in the analog domain, it does also support some mixed  %
+%  simulation features, such as osdi support (for verilogA models) and        %
+%  d_cosim.                                                                   %
+%                                                                             %
+% Thus, it's a powerfull and very interesting simulator for large projects,   %
+%  since it can exploit the greatest of all the worlds :                      %
+%  Verilator / GHDL cosim for the digital part, simulating against a compiled %
+%  model. This enable very large designs to be tested without massive         %
+%  performance hit.                                                           %
+%  Openvaf-r for VerilogA models, making it able to run some VLSI sim with    %
+%  compact models (or just, custom analog blocks that are easier to simulate  %
+%  from a text model rather than a schematic based one.                       %
+%                                                                             %
+% You can get the full manual here :                                          %
+%  https://ngspice.sourceforge.io/docs/ngspice-manual.pdf                     %
+%                                                                             %
+% Ngspice work from netlist files, that describe how components are wired.    %
+% These could be quite complex to write, espcecially once the simulation      %
+% involve co-simulations models.                                              %
+%                                                                             %
+% You can check in the /examples directory for some examples, in which some   %
+%  use cosimulations !                                                        %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
