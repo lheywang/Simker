@@ -15,5 +15,9 @@
 # Symbols
 *.sym
 
+# Compiled files
+*.so 
+*.osdi
+
 # Add the example folders
 !/examples/mixed_sim/*
