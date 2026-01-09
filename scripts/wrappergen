@@ -170,7 +170,6 @@ def parse_file(
                                 dataport(
                                     f"{item.name}#{elem.name}",
                                     "INPUT",
-                                    "NONE",
                                     str(width),
                                     id,
                                 )
@@ -180,7 +179,6 @@ def parse_file(
                                 dataport(
                                     f"{item.name}#{elem.name}",
                                     "OUTPUT",
-                                    "NONE",
                                     str(width),
                                     id,
                                 )
@@ -213,8 +211,10 @@ def match_ports(
     wires = []
     internals = []
 
+    matches = []
+
     def get_wires(
-        ports_in: list[dataport], ports_out: list[dataport]
+        ports_in: list[dataport], ports_out: list[dataport], matched: list[str]
     ) -> list[dataport]:
         t_wires = []
 
@@ -224,26 +224,32 @@ def match_ports(
                 if port1 is port2:
                     continue
 
-                if port1.name.split("#")[-1] == port2.name.split("#")[-1]:
-                    t_wires.append(
-                        dataport(
-                            port1.name.split("#")[-1],
-                            port1.direction,
-                            port1.width,
-                            port1.id,
+                p_name = port1.name.split("#")[-1]
+                if p_name == port2.name.split("#")[-1]:
+                    if p_name not in matched:
+                        t_wires.append(
+                            dataport(
+                                port1.name.split("#")[-1],
+                                port1.direction,
+                                port1.width,
+                                port1.id,
+                            )
                         )
-                    )
+                        matched.append(p_name)
 
-        return t_wires
+        return t_wires, matched
 
     # end of function
 
     # Matching the ports within them :
-    wires.extend(get_wires(inputs, inputs))
-    wires.extend(get_wires(outputs, outputs))
+    tmp, matches = get_wires(inputs, inputs, matches)
+    wires.extend(tmp)
+    tmp, matches = get_wires(outputs, outputs, matches)
+    wires.extend(tmp)
 
     # Matching port that are output to inputs
-    internals.extend(get_wires(outputs, inputs))
+    tmp, matches = get_wires(outputs, inputs, matches)
+    internals.extend(tmp)
 
     # Removing duplicates
     wires = list(set(wires))
@@ -387,12 +393,6 @@ def generate_module(
 
             f.write("endmodule\n\n")
 
-            f.write(f"// ===============================================\n")
-            f.write(f"// FILE WAS CREATED ON : {datetime.datetime.now()}\n")
-            f.write(f"// ===============================================\n")
-
-            return
-
         # Analog mode
         else:
 
@@ -409,10 +409,12 @@ def generate_module(
             analog_decl = analog_decl[1:] if analog_decl[0] == "\n" else analog_decl
             f.write(analog_decl)
 
-            f.write("\n")
-            return
+            f.write("\n\n")
 
-    # barrier to i don't know.
+        # Adding end of file mark, and leaving.
+        f.write(f"// ===============================================\n")
+        f.write(f"// FILE WAS CREATED ON : {datetime.datetime.now()}\n")
+        f.write(f"// ===============================================\n")
     return
 
 
@@ -744,9 +746,22 @@ def print_command_output(data: str) -> None:
     """
     lines = data.split("\n")
 
+    N = 120
+
     print(">")
     for line in lines:
-        print(f">   {line}")
+
+        # If the line is longer than 120 chars, split it into sublines.
+        # Each sublines will be padded a bit more to still get visibility.
+        if len(line) > N:
+            sublines = textwrap.wrap(line, N)
+            print(f">   {sublines[0]}")
+            for subline in sublines[1:]:
+                print(f">       {subline}")
+
+        # Else, directly print the line, as is.
+        else:
+            print(f">   {line}")
     print(">")
 
     return
@@ -898,9 +913,9 @@ if __name__ == "__main__":
         design simpler, but could lead to issues. Always start here ! If none of the solution works, you still could 
         write your own top, and let the script only generate the symbol for you !
     
-        WARNING : Due to some limitations of the pyverilog library used, some VALID syntax aren't handled. For example, 
+        WARNING : Due to some limitations of the pyverilog library used, some VALID syntax aren't handled (ANSI style). For example, 
         only modules defined as : module(input in, output out); are handled, where 
-        the other syntax, module(in, out); input in; output out; won't be handled (will return a 0 port device.)
+        the other syntax, module(in, out); input in; output out; won't be handled (will return a 0 port device.).
 """
     )
 
@@ -947,7 +962,7 @@ if __name__ == "__main__":
         sources = sources[0]
         binary = binary.with_suffix(".osdi")
         modName = sources.name.split(".")[0]
-        vlog = extracted[0].with_suffix(".v")
+        vlog = extracted[0].with_suffix(".va")
         top = top.with_suffix(".va")
 
         print(f"Converting the {sources.name} file into it's verilog stub ...")
@@ -992,13 +1007,9 @@ if __name__ == "__main__":
     if args.no_binary:
         print(f"Generating {binary.name} file ...")
         if args.analog:
-            generate_osdi(sources)
+            generate_osdi(top)
         else:
             generate_so(top, sources)
 
     # Finish and exit :
     print("Finished generating the required elements !")
-
-    # TODO :
-    # Why is there duplicates in the digital modes ? --> match_port function
-    # Add the binary generation
