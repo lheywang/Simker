@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      __    __    _______  ___         _______               %                                 
+%                     /" |  | "\  /"     "||"  |       |   __ "\              %
+%                    (:  (__)  :)(: ______)||  |       (. |__) :)             %
+%                     \/      \/  \/    |  |:  |       |:  ____/              %
+%                     //  __  \\  // ___)_  \  |___    (|  /                  %
+%                    (:  (  )  :)(:      "|( \_|:  \  /|__/ \                 %
+%                     \__|  |__/  \_______) \_______)(_______)                %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : wrappergen                                                      %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% WrapperGen: A Mixed-Signal Integration Tool for Ngspice & Xschem.           %
+%                                                                             %
+% Combines multiple Verilog or a Verilog-A modules into a single top-level    %
+%   wrapper, generating the necessary C/C++ binaries (.so/.osdi) and Xschem   %
+%   symbols (.sym). Essential for co-simulation (d_cosim) workflows which     %
+%   require a single digital entry point, and which can be quite tedious to   %
+%   set up for the first time.                                                %
+%                                                                             %
+% This tool expose a large number of options to really tailor the actions     %
+%   to your needs. You can basically disable any actions.                     %
+%                                                                             % 
+% Some of the greatest features : Auto wiring, to connect automatically the   %
+%   different digital modules between them. This happen if the nets share     %
+%   the same name. For example, every "clk" will be shared.                   %
+% In the same manner, it'll connect together modules that would expose an     %
+%   output and another input together. For example, A expose clk2 as output,  %
+%   and B expose clk2 as input, clk2 won't be exposed to spice, and will be   %
+%   wired directly.                                                           %
+%                                                                             %
+% This script does also generate a .sym file for XSCHEM, you'll only need to  %
+%   place it on the schematic, and, that's done ! No need to do more !        %
+%                                                                             %
+% Finally this script does also support analog mode, to wrap VerilogA modules %
+%   into their XSCHEM symbols. This mode is a bit more limited than digital   %
+%   but may still be really helpfull !                                        %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

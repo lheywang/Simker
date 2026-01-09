@@ -24,7 +24,9 @@
 % But that's not all ! There's also some usefull scripts, also included !     %
 %  - vhdl2verilog :                          Convert a VHDL file into a       %
 %                                              verilog one !                  %
-%  - To be completed !                                                        %
+%  - wrappergen :                            Wrap Verilog / VerilogA files    %
+%                                              into a single entity and       %
+%                                              symbol for XSCHEM / NGSPICE !  %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
@@ -38,4 +40,3 @@
 %   03/01/2026                                                                %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

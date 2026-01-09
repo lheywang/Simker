@@ -9,31 +9,25 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
-% HELP PAGE : OPENVAF-R                                                       %
+% HELP PAGE : vhdl2verilog                                                    %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
-% OpenVaf-R is a newer version of the OpenVaf compiler.                       %
-%  It's job is to compile VerilogA files (.va) into .osdi ones, which can     %
-%  then be included into the analog matrix of a SPICE simulator, here         %
-%  ngspice.                                                                   %
+% You have a VHDL file you want to convert into it's logically equivalent in  %
+%   Verilog ? Run this script as to do it !                                   %
 %                                                                             %
-% It's usage is not complicated :                                             %
-%  > openvaf-r file.va                                                        %
+% It's based on GHDL, which will synth your VHDL code into Verilog.           %
 %                                                                             %
-% And, then you include the model into the netlist :                          %
-%  .control                                                                   %
-%    pre_osdi file.osdi                                                       %
-%  .endc                                                                      %
-%  ...                                                                        %
-%  .Model [model name] [verilogA module name]                                 %
-%  N[xxx] [ports ... ] [model name]                                           %
+% Just type                                                                   %
+%   > vhdl2verilog myfile.vhdl2verilog                                        %
 %                                                                             %
-% If needed, there's example in the /examples directory, with some verilogA   %
-%  models involved.                                                           %
+% And, you're done ! A myfile.v file will be created, containing the verilog  %
+%   code.                                                                     %
 %                                                                             %
-% There's not a lot of public doc, so here the github repo :                  %
-%  https://github.com/OpenVAF/OpenVAF-Reloaded                                %
+% Just a note, the code are logically equivalent, that's not a bare           %
+%   translation. That mean you may not found variables names or width as      %
+%   you defined them. They're typically expanded to 32 bits.                  %
+% That shall not change anything, but, in case of weird behavior, leave that  %
+%   info in mind, just is case of...                                          %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
