@@ -35,6 +35,24 @@ class dataport:
     width: str
     id: int
 
+    def get_ports_name(self) -> str:
+        MSB = int(self.width.split(":")[0])
+        LSB = int(self.width.split(":")[1])
+
+        # If there's more than one bit, iterate from the higher order down to the 
+        # lowest index in the port range. That enable to generate ports with the right width, and
+        # which are spice compatible.
+        ports = []
+        if (MSB - LSB) > 0:
+            for index in range((MSB - LSB), -1, -1):
+                ports.append(f"{self.name}.{index}")
+        # Else, just return the bare port name
+        else:
+            ports.append(f"{self.name}")
+
+        # Return that as a list of elements separated by a comma.
+        return " ".join(ports)
+
 
 def va2v(input: Path, output: Path) -> None:
     """
@@ -326,28 +344,29 @@ def generate_analog_spice_string(
     name: str,
     inputs: list[dataport],
     outputs: list[dataport],
-    inouts: list[dataport],
     include: Path,
 ):
     # Generate names
     model_name = f"{name}_model"
     subckt_name = str(target.name).split(".")[0]
 
-    # Generate port names
-    inp_name = [net.name.replace("#", "_") for net in inputs]
-    out_name = [net.name.replace("#", "_") for net in outputs]
-    ion_name = [net.name.replace("#", "_") for net in inouts]
-
-    inp_str = str(*inp_name)
-    out_str = str(*out_name)
-    ion_str = str(*ion_name)
+    # Generating nets names
+    inp_name = []
+    out_name = []
+    for net in inputs:
+        inp_name.extend(net.get_ports_name().replace("#", "_").split(" "))
+    for net in outputs:
+        out_name.extend(net.get_ports_name().replace("#", "_").split(" "))
+    
+    inp_str = " ".join(inp_name)
+    out_str = " ".join(out_name)
 
     return f"""
 pre_osdi {str(include)}
 
-.subckt {subckt_name} {inp_str} {ion_str} {out_str}
+.subckt {subckt_name} {inp_str} {out_str}
   .Model {model_name} {name}
-  .N1 {inp_str} {ion_str} {out_str} {model_name}
+  .N1 {inp_str} {out_str} {model_name}
 .ends
 """
 
@@ -357,11 +376,10 @@ def generate_digital_spice_string(
     name: str,
     inputs: list[dataport],
     outputs: list[dataport],
-    inouts: list[dataport],
     include: Path,
     voltage: float,
 ):
-    # Generate the names 
+    # Generate the names
     model_name = f"{name}_model"
     subckt_name = str(target.name).split(".")[0]
 
@@ -369,22 +387,28 @@ def generate_digital_spice_string(
     low_th = round(voltage * 0.3, 1)
     high_th = round(voltage * 0.7, 1)
 
-    # Generate port names
-    inp_name = [net.name.replace("#", "_") for net in inputs]
-    out_name = [net.name.replace("#", "_") for net in outputs]
+    # Generating nets names
+    inp_name = []
+    out_name = []
+    for net in inputs:
+        inp_name.extend(net.get_ports_name().replace("#", "_").split(" "))
+    for net in outputs:
+        out_name.extend(net.get_ports_name().replace("#", "_").split(" "))
 
-    inp_str = str(*inp_name)
-    out_str = str(*out_name)
+    inp_str = " ".join(inp_name)
+    out_str = " ".join(out_name)
 
-    # Generate digital nets naming : 
-    d_inp_name = [f"d_{val}" for val in inp_name]
-    d_out_name = [f"d_{val}" for val in out_name]
+    # Then, generate DACs and ADCs
+    adcs = ""
+    for index, inp in enumerate(inp_name):
+        adcs = adcs + f"\n  ADC{index} {inp} d_{inp} a2d"
+    dacs = ""
+    for index, out in enumerate(out_name):
+        dacs = dacs + f"\n  DAC{index} d_{out} {out} d2a"
 
-    # Generate nets names
-    # TODO 
-    # Handle net order
-    # Handle bus splitting
-    # ...
+    # Generate the digital names ports :
+    d_inp_name = " ".join([f"d_{val}" for val in inp_name])
+    d_out_name = " ".join([f"d_{val}" for val in out_name])
 
     return f"""
 .subckt {subckt_name} {inp_str} {out_str}
@@ -392,10 +416,11 @@ def generate_digital_spice_string(
   .model d2a dac_bridge(out_low=0.0 out_high={voltage})
 
   .model {model_name} d_cosim simulation="{str(include)}"
+  {adcs}
+  {dacs}
 
-
-    
-
+  A{name} [{d_inp_name}] [{d_out_name}] {model_name}
+.ends
 """
 
 
@@ -408,7 +433,7 @@ def generate_sym(
     wires: list[dataport],
     internals: list[dataport],
     include: Path,
-    modName : str,
+    modName: str,
     voltage: float,
 ) -> None:
 
@@ -569,11 +594,11 @@ def generate_sym(
         spice_string = ""
         if analog == True:
             spice_string = generate_analog_spice_string(
-                target, modName, i_inputs, i_outputs, i_inouts, include
+                target, modName, i_inputs, i_outputs, include
             )
         else:
             spice_string = generate_digital_spice_string(
-                target, name, i_inputs, i_outputs, i_inouts, include, voltage
+                target, name, i_inputs, i_outputs, include, voltage
             )
 
         # Finally, append the spice attributes to the model :
@@ -695,6 +720,8 @@ if __name__ == "__main__":
         vlog = extracted[0].with_suffix(".v")
         va2v(sources, vlog)
         sources = [vlog]
+    else:
+        include = top.with_suffix(".so")
 
     # Generate the JSON data and extract the data
     print("Parsing files ...")
@@ -714,11 +741,14 @@ if __name__ == "__main__":
 
     # Generating the symbol file:
     mode = True if args.analog == "yes" else False
-    generate_sym(sym, mode, inputs, outputs, inouts, wires, internals, include, modName, voltage)
+    generate_sym(
+        sym, mode, inputs, outputs, inouts, wires, internals, include, modName, voltage
+    )
 
     # Finish and exit :
     print("Finished")
 
-    # TODO : 
-    # Ensure re-generation of the verilogA file to match the ports order 
+    # TODO :
+    # Ensure re-generation of the verilogA file to match the ports order
     # And be 100% sure !
+    # Check
