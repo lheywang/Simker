@@ -19,5 +19,8 @@
 *.so 
 *.osdi
 
+# Verilator outputs
+*/*_obj_dir/*
+
 # Add the example folders
 !/examples/mixed_sim/*
