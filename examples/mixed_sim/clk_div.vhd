@@ -3,8 +3,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
   
 entity clk_div is
-port ( clk,reset: in std_logic;
-clock_out: out std_logic);
+port ( clk,rstn: in std_logic;
+clk2: out std_logic);
 end clk_div;
   
 architecture bhv of clk_div is
@@ -14,9 +14,9 @@ signal tmp : std_logic := '0';
   
 begin
   
-process(clk,reset)
+process(clk,rstn)
 begin
-if(reset='0') then
+if(rstn='0') then
 count<=1;
 tmp<='0';
 elsif(clk'event and clk='1') then
@@ -26,7 +26,7 @@ tmp <= NOT tmp;
 count <= 1;
 end if;
 end if;
-clock_out <= tmp;
+clk2 <= tmp;
 end process;
   
 end bhv;

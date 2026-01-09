@@ -15,32 +15,35 @@ Vrst rst_a 0 PWL(0 0 450n 0 451n 1)
 abridge_in [clk_a rst_a] [clk_d rst_d] a2d
 
 * --- 4. DIGITAL COSIM INSTANCE ---
-* Removed 'null', using digital nodes (suffix _d)
-Atop [clk_d rst_d] [q3_d q2_d q1_d q0_d] top
+Atop [rst_d clk_d] [q3_d q2_d q1_d q0_d] top
 .model top d_cosim simulation="./top.so"
 
 * --- 5. OUTPUT BRIDGES (Digital to Analog) ---
-* This converts digital states to 0V/5V so the VA driver has an input
 abridge_out0 [q0_d] [q0_a] d2a
 abridge_out1 [q1_d] [q1_a] d2a
 abridge_out2 [q2_d] [q2_a] d2a
 abridge_out3 [q3_d] [q3_a] d2a
 
 * --- 6. ANALOG DRIVERS & LOADS ---
-.Model driver_model driver_va
+.Model driver_model driver
 .subckt driver in out
   Ndriver in out driver_model
 .ends
 
-xdrv0 q0_a o0 driver
-xdrv1 q1_a o1 driver
-xdrv2 q2_a o2 driver
-xdrv3 q3_a o3 driver
+Xdrv0 q0_a o0 driver
+Xdrv1 q1_a o1 driver
+Xdrv2 q2_a o2 driver
+Xdrv3 q3_a o3 driver
 
-Rload0 o0 0 1k
-Rload1 o1 0 1k
-Rload2 o2 0 1k
-Rload3 o3 0 1k
+Rload0 o0 o0c 100
+Rload1 o1 o1c 100
+Rload2 o2 o2c 100
+Rload3 o3 o3c 100
+
+Cload0 o0c 0 1n
+Cload1 o1c 0 1n
+Cload2 o2c 0 1n
+Cload3 o3c 0 1n
 
 * --- 7. SIMULATION ---
 .tran 10n 15u
@@ -48,6 +51,6 @@ Rload3 o3 0 1k
 .control
   run
   * Plot the analog clock and the final driver outputs
-  plot v(clk_a) v(o3)+24 v(o2)+18 v(o1)+12 v(o0)+6 v(rst_a)-6
+  plot v(clk_a) v(o3c)+24 v(o2c)+18 v(o1c)+12 v(o0c)+6 v(rst_a)-6
 .endc
 .end
