@@ -244,8 +244,6 @@ def match_ports(
     # Matching the ports within them :
     tmp, matches = get_wires(inputs, inputs, matches)
     wires.extend(tmp)
-    tmp, matches = get_wires(outputs, outputs, matches)
-    wires.extend(tmp)
 
     # Matching port that are output to inputs
     tmp, matches = get_wires(outputs, inputs, matches)
