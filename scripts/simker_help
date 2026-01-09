@@ -36,6 +36,16 @@ if [ "$1" = "xschem" ]; then
   exit 0
 fi
 
+if [ "$1" = "vhdl2verilog" ]; then
+  cat /tools/doc/help_vhdl2verilog.txt
+  exit 0
+fi
+
+if [ "$1" = "wrappergen" ]; then
+  cat /tools/doc/help_wrappergen.txt
+  exit 0
+fi
+
 if [ "$1" = "versions" ]; then
   cat /tools/doc/versions.txt
   exit 0
