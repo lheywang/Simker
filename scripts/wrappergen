@@ -18,6 +18,8 @@ import argparse
 import textwrap
 from pathlib import Path
 import datetime
+import subprocess
+import shlex
 from dataclasses import dataclass
 
 from pyverilog.vparser.parser import parse
@@ -29,17 +31,39 @@ from pyverilog.vparser.ast import Inout as astInout
 
 @dataclass(frozen=True)
 class dataport:
+    """
+    This class store the elements required to define a single port of a verilog(a) module.
+
+    Functions :
+        -> get_port_name() -> Return the port names including the bus expansion.
+
+    Members :
+        -> name -> name of the port
+        -> direction -> Is the IO an input or an input (inout aren't handled.)
+        -> width -> Verilog formatted bus width, if needed. Otherwise 0:0, which is perfectly valid.
+        -> id -> id of the port, incremented by one on each new port. Enable to track orders and others things like that.
+
+    """
+
     name: str
     direction: str
-    type: str
     width: str
     id: int
 
     def get_ports_name(self) -> str:
+        """
+        This function return the name of a port, and handle the bus expansion if needed.
+
+        Arguments :
+            -> None
+
+        Returns :
+            -> str : A string formatted with else the name "clk", or the bus with an index suffix "q.3 q.2 q.1 q.0".
+        """
         MSB = int(self.width.split(":")[0])
         LSB = int(self.width.split(":")[1])
 
-        # If there's more than one bit, iterate from the higher order down to the 
+        # If there's more than one bit, iterate from the higher order down to the
         # lowest index in the port range. That enable to generate ports with the right width, and
         # which are spice compatible.
         ports = []
@@ -52,12 +76,19 @@ class dataport:
 
         # Return that as a list of elements separated by a comma.
         return " ".join(ports)
-    
 
-def va2v(input: Path, output: Path) -> None:
+
+def va2v(input: Path, output: Path) -> str:
     """
     This small function generate a verilog stub from a VerilogA file.
-    This, indeed does not account for the functionnality, it's only to make possible to Verilog to count the ports on it.
+
+    Arguments :
+        -> input : The source VerilogA file
+        -> output : The target Verilog file (stub)
+
+    Returns :
+        -> str : A string that contain the declarative part of the VerilogA file. Used when re-generating the verilogA file.
+
     """
     data = None
 
@@ -96,9 +127,17 @@ def va2v(input: Path, output: Path) -> None:
 
 def parse_file(
     files: list[Path],
-) -> tuple[list[dataport], list[dataport], list[dataport]]:
+) -> tuple[list[dataport], list[dataport], list[str]]:
     """
-    This function count the port, and resolve their specs into the generated JSON.
+    This function parse verilog files and list the IO ports and found modules.
+
+    Arguments :
+        -> files : List of files as Pathlib objects to be parsed.
+
+    Returns :
+        -> list of inputs as dataport class(es)
+        -> list of outputs as dataport class(es)
+        -> list of the module names that were found.
     """
 
     # Init ports
@@ -158,7 +197,18 @@ def match_ports(
     inputs: list[dataport], outputs: list[dataport]
 ) -> tuple[list[dataport], list[dataport], list[dataport], list[dataport]]:
     """
-    This function look for duplicate net names, and transform them into wires to be shared rather than individual ports.
+    This function identify the ports that can be shared by their same name.
+    Does also link outputs to inputs if possible.
+
+    Arguments :
+        -> inputs : A list of dataport objects to be linked.
+        -> outputs : A list of dataport objects to be linked.
+
+    Returns :
+        -> inputs : A list of dataport objects that was removed from duplicated.
+        -> outputs : A list of dataport objects that was removed from duplicated.
+        -> wires : The list of dataport objects that will be shared.
+        -> internals : The list of dataport objects to be internalized.
     """
     wires = []
     internals = []
@@ -179,7 +229,6 @@ def match_ports(
                         dataport(
                             port1.name.split("#")[-1],
                             port1.direction,
-                            port1.type,
                             port1.width,
                             port1.id,
                         )
@@ -198,6 +247,7 @@ def match_ports(
 
     # Removing duplicates
     wires = list(set(wires))
+    internals = list(set(internals))
 
     return inputs, outputs, wires, internals
 
@@ -213,7 +263,20 @@ def generate_module(
     analog_decl: str,
 ) -> None:
     """
-    Generate the top level verilog(a) file, that will be compiled into the ngspice shared library
+    This function generate the top level file for both Verilog and VerilogA modes.
+
+    Arguments :
+        -> target : The file where we're going to print on.
+        -> analog : If True, the generated file is VerilogA, else Verilog.
+        -> modules : The list of the used modules.
+        -> inputs : The list of dataport objects that will be exposed as inputs.
+        -> outputs : The list of dataport objects that will be exposed as outputs.
+        -> wires : The list of dataport objects that will be shared.
+        -> internals : The list of dataport objects that won't be exposed to the outside.
+        -> analog_decl : The string that contain the analog declaration of the source VerilogA file. Only used when analog == True.
+
+    Returns :
+        -> None
     """
 
     with open(target, "w+") as f:
@@ -222,10 +285,10 @@ def generate_module(
         f.write(f"// THIS FILE WAS AUTOGENERATED. DO NOT EDIT.\n")
         f.write(f"// =========================================\n\n")
 
-        # Include standard libs if needed : 
+        # Include standard libs if needed :
         if analog == True:
-            f.write("`include \"constants.h\"\n")
-            f.write("`include \"discipline.h\"\n\n")
+            f.write('`include "constants.h"\n')
+            f.write('`include "discipline.h"\n\n')
 
         f.write(f"module {target.stem} (\n")
 
@@ -258,10 +321,7 @@ def generate_module(
                             f"\n    {type:8} [{str(net.width).center(8)}] {net.name.replace("#", "_")},"
                         )
                     else:
-                        f.write(
-                            f"\n    {type:8} {net.name.split("#")[-1]},"
-                        )
-                    
+                        f.write(f"\n    {type:8} {net.name.split("#")[-1]},")
 
         # Adding unique ports :
         append_nets(inputs, "input", analog)
@@ -273,7 +333,7 @@ def generate_module(
         # Closing module init :
         f.write("\n\n);\n")
 
-        # Starting the differenciation between analog and digital path : 
+        # Starting the differenciation between analog and digital path :
         if analog == False:
 
             # Adding the wires :
@@ -332,7 +392,7 @@ def generate_module(
             f.write(f"// ===============================================\n")
 
             return
-        
+
         # Analog mode
         else:
 
@@ -352,6 +412,9 @@ def generate_module(
             f.write("\n")
             return
 
+    # barrier to i don't know.
+    return
+
 
 def generate_analog_spice_string(
     target: Path,
@@ -359,7 +422,20 @@ def generate_analog_spice_string(
     inputs: list[dataport],
     outputs: list[dataport],
     include: Path,
-):
+) -> str:
+    """
+    This function return the spice string to be added into the XSCHEM symbol for the analog mode.
+
+    Arguments :
+        -> target : The name of the subcircuit to be created.
+        -> name : The name of the model to be used.
+        -> inputs : The list of dataport objects to be used as inputs.
+        -> outputs : The list of dataport objects to be used as outputs.
+        -> include : The name of the binary file to be included as the library (.osdi)
+
+    Returns :
+        -> str : Spice formatted string to include the model.
+    """
     # Generate names
     model_name = f"{name}_model"
     subckt_name = str(target.name).split(".")[0]
@@ -371,7 +447,7 @@ def generate_analog_spice_string(
         inp_name.extend(net.get_ports_name().replace("#", "_").split(" "))
     for net in outputs:
         out_name.extend(net.get_ports_name().replace("#", "_").split(" "))
-    
+
     inp_str = " ".join(inp_name)
     out_str = " ".join(out_name)
 
@@ -392,14 +468,32 @@ def generate_digital_spice_string(
     outputs: list[dataport],
     include: Path,
     voltage: float,
-):
+) -> str:
+    """
+    This function generate the spice string to be filled into the XSCHEM symbol, for the digital mode :
+
+    There's the option to choose the voltage standard to any common values.
+    In input, the threshold are respectively 0.33 and 0.66 this value, for respectively 0 and 1.
+    In output, the values are 0.00 and voltage, for respectively 0 and 1.
+
+    Arguments :
+        -> target : The name of the subcircuit.
+        -> name : The name of the model.
+        -> inputs : List of dataport objects to be used as inputs.
+        -> outputs : List of dataport objects to be used as outputs.
+        -> include : The binary file to be included as the model (.so)
+        -> voltage : The voltage standard to be used.
+
+    Returns :
+        -> str : A spice compatible formatted string, which include all the necessary for digital simulations.
+    """
     # Generate the names
     model_name = f"{name}_model"
     subckt_name = str(target.name).split(".")[0]
 
     # First, compute the thresholds
-    low_th = round(voltage * 0.3, 1)
-    high_th = round(voltage * 0.7, 1)
+    low_th = round(voltage * 0.33, 1)
+    high_th = round(voltage * 0.66, 1)
 
     # Generating nets names
     inp_name = []
@@ -449,6 +543,23 @@ def generate_sym(
     modName: str,
     voltage: float,
 ) -> None:
+    """
+    This function generate the XSCHEM symbol, to make connection in mixed sim easier.
+
+    Arguments :
+        -> target : The .sym file to be created.
+        -> analog : The mode of operation. Set to True if the symbol shall be analog.
+        -> inputs : The list of dataport objects to be used as inputs.
+        -> outputs : The list of dataport objects to be used as outputs.
+        -> wires : The list of dataport objects to be used as shared elements.
+        -> internals : The list of dataport objects to be used as private elements.
+        -> include : The binary file to be included (.so or .osdi).
+        -> modName : The name of the module to be used.
+        -> voltage : The voltage standard (only in Digital mode).
+
+    Returns :
+        -> None
+    """
 
     # Define space between pins :
     PITCH = 20
@@ -620,11 +731,77 @@ def generate_sym(
 
     return
 
-def generate_osdi():
-    pass
 
-def generate_so():
-    pass
+def print_command_output(data: str) -> None:
+    """
+    This function print subprocess outputs in a formatted way, to clearly identify the outputs.
+
+    Arguments :
+        -> data : the output string of the command
+
+    Returns :
+        -> None
+    """
+    lines = data.split("\n")
+
+    print(">")
+    for line in lines:
+        print(f">   {line}")
+    print(">")
+
+    return
+
+
+def generate_osdi(top: Path) -> None:
+    """
+    This function invoke openvaf-r compiler to build the .osdi file from the .va source.
+
+    Arguments :
+        -> top : Source verilogA file.
+
+    Returns :
+        -> None
+    """
+    # Creating the command to be runned :
+    tool = f"openvaf-r {top}"
+    print(f"Running : {tool}")
+
+    # Prepare args and run the command
+    args = shlex.split(tool)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, errors = p.communicate()
+
+    print_command_output(output.decode())
+    print_command_output(errors.decode())
+
+    return
+
+
+def generate_so(top: Path, sources: list[Path]) -> None:
+    """
+    This function invoke vlnggen script from ngspice to generate (using verilator) the .so file.
+
+    Arguments :
+        -> top : The top Verilog file.
+        -> sources : The list of Path that contained sources, and thus shall be compiled into the .so file.
+
+    Returns :
+        -> None
+    """
+    # Creating the command to be runned :
+    sources_str = " ".join([str(source) for source in sources])
+    tool = f"ngspice vlnggen {top} {sources_str}"
+    print(f"Running : {tool}")
+
+    # Prepare args and run the command
+    args = shlex.split(tool)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, errors = p.communicate()
+
+    print_command_output(output.decode())
+    print_command_output(errors.decode())
+
+    return
 
 
 if __name__ == "__main__":
@@ -694,6 +871,14 @@ if __name__ == "__main__":
         action="store_false",
         help="Disable binary generation. Otherwise (default), the .osdi or .so file will be generated from the top level file.",
     )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        dest="debug",
+        default=False,
+        action="store_true",
+        help="Add some debug logs and prints.",
+    )
 
     parser.description = textwrap.dedent(
         """
@@ -722,6 +907,10 @@ if __name__ == "__main__":
     # Parse arguments :
     args = parser.parse_args()
 
+    # Print the args
+    if args.debug == True:
+        print(args)
+
     # First, ensure path are existing :
     tmp = Path(args.temp)
     tmp.mkdir(parents=True, exist_ok=True)
@@ -739,35 +928,37 @@ if __name__ == "__main__":
     sym = top.with_suffix(".sym")
     modName = None
 
+    binary = (
+        top.with_suffix(".tmp")
+        if args.bin_name == "top.so"
+        else Path(args.bin_name).resolve()
+    )
+
     # Parsing the remaining args
     voltage = float(args.voltage)
 
-    # init some elements : 
+    # init some elements :
     analog_decl = ""
 
-    binary = (
-            top.with_suffix(".tmp")
-            if args.bin_name == "top.so"
-            else Path(args.bin_name).resolve()
-        )
-    
     # If we're in analog mode : Convert the file into it's digital stub
-    if args.analog :
-        
-        # Generating names for the analog part : 
+    if args.analog:
+
+        # Generating names for the analog part :
         sources = sources[0]
         binary = binary.with_suffix(".osdi")
         modName = sources.name.split(".")[0]
         vlog = extracted[0].with_suffix(".v")
+        top = top.with_suffix(".va")
 
         print(f"Converting the {sources.name} file into it's verilog stub ...")
 
         analog_decl = va2v(sources, vlog)
         sources = [vlog]
+
     else:
         binary = binary.with_suffix(".so")
 
-    # Generate the JSON data and extract the data
+    # Parse source files
     print(f"Parsing files : {" ".join([source.name for source in sources])}")
     inputs, outputs, modules = parse_file(sources)
 
@@ -778,27 +969,35 @@ if __name__ == "__main__":
         print("Combining ports into single ports ...")
         inputs, outputs, wires, internals = match_ports(inputs, outputs)
 
-    
-
-    # If needed, generating the top level entity :
+    # Generating the top entity :
     print(f"Generating verilog {top.name.split(".")[0]} module ...")
-    generate_module(top, args.analog, modules, inputs, outputs, wires, internals, analog_decl)
+    generate_module(
+        top, args.analog, modules, inputs, outputs, wires, internals, analog_decl
+    )
 
     # Generating the symbol file:
     if args.sym == True:
         generate_sym(
-            sym, args.analog, inputs, outputs, wires, internals, binary, modName, voltage
+            sym,
+            args.analog,
+            inputs,
+            outputs,
+            wires,
+            internals,
+            binary,
+            modName,
+            voltage,
         )
 
-    if args.no_binary == True:
+    if args.no_binary:
         print(f"Generating {binary.name} file ...")
-        if args.analog == True:  
-            generate_osdi()
+        if args.analog:
+            generate_osdi(sources)
         else:
-            generate_so()
+            generate_so(top, sources)
 
     # Finish and exit :
-    print("Finished")
+    print("Finished generating the required elements !")
 
     # TODO :
     # Why is there duplicates in the digital modes ? --> match_port function
