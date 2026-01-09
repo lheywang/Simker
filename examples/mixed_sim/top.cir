@@ -30,6 +30,7 @@ abridge_out3 [q3_d] [q3_a] d2a
   Ndriver in out driver_model
 .ends
 
+* Final RC filters, to really get profit of the mixed sim !
 Xdrv0 q0_a o0 driver
 Xdrv1 q1_a o1 driver
 Xdrv2 q2_a o2 driver
@@ -50,7 +51,7 @@ Cload3 o3c 0 1n
 
 .control
   run
-  * Plot the analog clock and the final driver outputs
+  * Plot the analog clock and the final driver outputs shifted from N volts each time to really get a nice output !
   plot v(clk_a) v(o3c)+24 v(o2c)+18 v(o1c)+12 v(o0c)+6 v(rst_a)-6
 .endc
 .end
