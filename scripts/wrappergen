@@ -651,7 +651,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-m",
-        "--no-merge_wires",
+        "--no-merge-wires",
         dest="merge_wires",
         default=True,
         action="store_false",
@@ -668,26 +668,40 @@ if __name__ == "__main__":
     parser.add_argument(
         "-a",
         "--analog",
+        dest="analog",
         action="store_true",
         help="Enable the analog mode, in which the file is treated as it, and generate a symbol from it. Default to no.",
     )
     parser.add_argument(
         "-v",
         "--voltage",
+        dest="voltage",
         default="3.3",
         help='Enable to configure the voltage level used for the ADC / DAC bridges on digital blocks. Ignored for analog blocks. Default to "3.3" (V)',
     )
     parser.add_argument(
         "-va",
-        "--veriloga_file",
+        "--veriloga-file",
+        dest="veriloga_file",
         default="None",
         help="Set the name of the OSDI file that must be used. Default to the same name as the veriloga file, with the extension renamed to .osdi.\nThis option is only used in analog mode.",
+    )
+    parser.add_argument(
+        "-nb",
+        "--no-binary",
+        dest="no_binary",
+        default="store_false",
+        help="Disable binary generation. Otherwise (default), the .osdi or .so file will be generated from the top level file.",
     )
 
     parser.description = textwrap.dedent(
         """
         This tool enable the user to combine multiple verilog files into a single, higher level one.
-        Especially usefull when working with d_cosim in ngspice, which can only tolerate a single digital block !"""
+        Especially usefull when working with d_cosim in ngspice, which can only tolerate a single digital block !
+
+        There's a lot of options to fully integrate it into your workflow, for example it can even generate directly
+        the binaries from the files, to remove the need for a Makefile for example ! Check the help page !
+"""
     )
 
     parser.epilog = textwrap.dedent(
@@ -732,7 +746,7 @@ if __name__ == "__main__":
 
     # If we're in analog mode : Convert the file into it's digital stub
     if args.analog :
-        print("Converting the .va file into it's verilog stub ...")
+        
         sources = sources[0]
         include = (
             sources.with_suffix(".osdi")
@@ -741,13 +755,16 @@ if __name__ == "__main__":
         )
         modName = sources.name.split(".")[0]
         vlog = extracted[0].with_suffix(".v")
+
+        print(f"Converting the {sources.name} file into it's verilog stub ...")
+
         analog_decl = va2v(sources, vlog)
         sources = [vlog]
     else:
         include = top.with_suffix(".so")
 
     # Generate the JSON data and extract the data
-    print("Parsing files ...")
+    print(f"Parsing files : {" ".join([source.name for source in sources])}")
     inputs, outputs, modules = parse_file(sources)
 
     # Optionnaly, match the ports :
@@ -760,7 +777,7 @@ if __name__ == "__main__":
     
 
     # If needed, generating the top level entity :
-    print("Generating verilog top module ...")
+    print(f"Generating verilog {top.name.split(".")[0]} module ...")
     generate_module(top, args.analog, modules, inputs, outputs, wires, internals, analog_decl)
 
     # Generating the symbol file:
@@ -769,9 +786,16 @@ if __name__ == "__main__":
             sym, args.analog, inputs, outputs, wires, internals, include, modName, voltage
         )
 
+    if args.no_binary == False:
+        print(f"Generating {include.name} file ...")
+        if args.analog == True:  
+            generate_osdi()
+        else:
+            generate_so()
+
     # Finish and exit :
     print("Finished")
 
     # TODO :
-    # To add : append the electrical nets pins declaration to veriloga.
-    # Check and test the whole script
+    # Why is there duplicates in the digital modes ? --> match_port function
+    # Add the binary generation
