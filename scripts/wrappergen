@@ -655,7 +655,7 @@ if __name__ == "__main__":
         dest="merge_wires",
         default=True,
         action="store_false",
-        help="Automatically merge the wire that share a same net into a single output at the end. Default = yes.",
+        help="Disable the auto merge the wire that share a same net into a single output at the end. Enabled by default.",
     )
     parser.add_argument(
         "-s",
@@ -663,7 +663,7 @@ if __name__ == "__main__":
         dest="sym",
         default=True,
         action="store_false",
-        help="Generate the xschem symbol in the same pass. Default = yes",
+        help="Do not generate the xschem symbol in the same pass. Symbol is by default generated.",
     )
     parser.add_argument(
         "-a",
@@ -680,27 +680,29 @@ if __name__ == "__main__":
         help='Enable to configure the voltage level used for the ADC / DAC bridges on digital blocks. Ignored for analog blocks. Default to "3.3" (V)',
     )
     parser.add_argument(
-        "-va",
-        "--veriloga-file",
-        dest="veriloga_file",
-        default="None",
-        help="Set the name of the OSDI file that must be used. Default to the same name as the veriloga file, with the extension renamed to .osdi.\nThis option is only used in analog mode.",
+        "-o",
+        "--output",
+        dest="bin_name",
+        default="top.so",
+        help="Set the name of the OSDI / SO file to be generated (and used in symbol, unless specified to not create a symbol).",
     )
     parser.add_argument(
         "-nb",
         "--no-binary",
         dest="no_binary",
-        default="store_false",
+        default=True,
+        action="store_false",
         help="Disable binary generation. Otherwise (default), the .osdi or .so file will be generated from the top level file.",
     )
 
     parser.description = textwrap.dedent(
         """
-        This tool enable the user to combine multiple verilog files into a single, higher level one.
-        Especially usefull when working with d_cosim in ngspice, which can only tolerate a single digital block !
+        WrapperGen: A Mixed-Signal Integration Tool for Ngspice & Xschem.
 
-        There's a lot of options to fully integrate it into your workflow, for example it can even generate directly
-        the binaries from the files, to remove the need for a Makefile for example ! Check the help page !
+        Combines multiple Verilog or a Verilog-A modules into a single top-level wrapper,
+        generating the necessary C/C++ binaries (.so/.osdi) and Xschem symbols (.sym).
+        Essential for co-simulation (d_cosim) workflows which require a single digital entry point,
+        and which can be quite tedious to set up for the first time.
 """
     )
 
@@ -735,7 +737,6 @@ if __name__ == "__main__":
     extracted = [Path(tmp / t.name).with_suffix(".json") for t in sources]
     top = Path(args.name).resolve()
     sym = top.with_suffix(".sym")
-    include = None
     modName = None
 
     # Parsing the remaining args
@@ -744,15 +745,18 @@ if __name__ == "__main__":
     # init some elements : 
     analog_decl = ""
 
+    binary = (
+            top.with_suffix(".tmp")
+            if args.bin_name == "top.so"
+            else Path(args.bin_name).resolve()
+        )
+    
     # If we're in analog mode : Convert the file into it's digital stub
     if args.analog :
         
+        # Generating names for the analog part : 
         sources = sources[0]
-        include = (
-            sources.with_suffix(".osdi")
-            if args.veriloga_file == "None"
-            else Path(args.veriloga_file).resolve().with_suffix(".osdi")
-        )
+        binary = binary.with_suffix(".osdi")
         modName = sources.name.split(".")[0]
         vlog = extracted[0].with_suffix(".v")
 
@@ -761,7 +765,7 @@ if __name__ == "__main__":
         analog_decl = va2v(sources, vlog)
         sources = [vlog]
     else:
-        include = top.with_suffix(".so")
+        binary = binary.with_suffix(".so")
 
     # Generate the JSON data and extract the data
     print(f"Parsing files : {" ".join([source.name for source in sources])}")
@@ -783,11 +787,11 @@ if __name__ == "__main__":
     # Generating the symbol file:
     if args.sym == True:
         generate_sym(
-            sym, args.analog, inputs, outputs, wires, internals, include, modName, voltage
+            sym, args.analog, inputs, outputs, wires, internals, binary, modName, voltage
         )
 
-    if args.no_binary == False:
-        print(f"Generating {include.name} file ...")
+    if args.no_binary == True:
+        print(f"Generating {binary.name} file ...")
         if args.analog == True:  
             generate_osdi()
         else:
