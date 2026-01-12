@@ -417,6 +417,7 @@ def generate_module(
 
 
 def generate_analog_spice_string(
+    sym : Path, 
     target: Path,
     name: str,
     inputs: list[dataport],
@@ -453,7 +454,7 @@ def generate_analog_spice_string(
 
     return f"""
 .control
-  pre_osdi \\\"{str(include)}\\\"
+  pre_osdi {str(include.relative_to(sym.parent))}
 .endc
 
 .subckt {subckt_name} {inp_str} {out_str}
@@ -464,6 +465,7 @@ def generate_analog_spice_string(
 
 
 def generate_digital_spice_string(
+    sym: Path, 
     target: Path,
     name: str,
     inputs: list[dataport],
@@ -525,7 +527,7 @@ def generate_digital_spice_string(
   .model a2d adc_bridge(in_low={low_th} in_high={high_th})
   .model d2a dac_bridge(out_low=0.0 out_high={voltage})
 
-  .model {model_name} d_cosim simulation=\\\"{str(include)}\\\"
+  .model {model_name} d_cosim simulation={str(include.relative_to(sym.parent))}
   {adcs}
   {dacs}
 
@@ -738,11 +740,11 @@ def generate_sym(
         spice_string = ""
         if analog == True:
             spice_string = generate_analog_spice_string(
-                target, modName, i_inputs, i_outputs, include
+                sym, target, modName, i_inputs, i_outputs, include
             )
         else:
             spice_string = generate_digital_spice_string(
-                target, name, i_inputs, i_outputs, include, voltage
+                sym, target, name, i_inputs, i_outputs, include, voltage
             )
 
         # Finally, append the spice attributes to the model :
