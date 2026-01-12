@@ -11,6 +11,7 @@
 
 # Netlists
 *.cir
+*.spice 
 
 # Symbols
 *.sym
