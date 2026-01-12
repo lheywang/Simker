@@ -632,7 +632,8 @@ def generate_sym(
         f.write("K {}\n")
         f.write("V {}\n")
         f.write("S {}\n")
-        f.write("E {}\n\n")
+        f.write("E {}\n")
+        f.write("S {type=subcircuit} \n\n")
 
         # Get sizes of the symbol box :
         def get_dimension(size: int) -> int:
@@ -737,24 +738,27 @@ def generate_sym(
             f"T {"{"}{name}{"}"} {0 - (TEXT_CHAR_SIZE * len(name))} {0 - (TEXT_CHAR_SIZE * len(name))} 0 0 0.2 0.2\n"
         )
 
-        # Add the spice string :
-        spice_string = ""
-        if analog == True:
-            spice_string = generate_analog_spice_string(
-                sym, target, modName, i_inputs, i_outputs, include
-            )
-        else:
-            spice_string = generate_digital_spice_string(
-                sym, target, name, i_inputs, i_outputs, include, voltage
-            )
-
         # Finally, append the spice attributes to the model :
         f.write("\n")
-        f.write(f"G {"{"}type=subcircuit \n")
+        f.write(f"K {"{"}type=subcircuit \n")
         f.write('format="@name @pinlist @model"\n')
         f.write(f'template="name=X1 model={str(target.name).split(".")[0]}"\n')
-        f.write(f'spice_sym_def="{spice_string}"\n')
+        f.write(f'spice_sym_def=".include {target.with_suffix(".spice")}"\n')
         f.write("}\n\n")
+
+    # Add the spice string :
+    spice_string = ""
+    if analog == True:
+        spice_string = generate_analog_spice_string(
+            sym, target, modName, i_inputs, i_outputs, include
+        )
+    else:
+        spice_string = generate_digital_spice_string(
+            sym, target, name, i_inputs, i_outputs, include, voltage
+        )
+
+    with open(target.with_suffix(".spice"), "w+") as f:
+        f.write(spice_string)
 
     return
 
