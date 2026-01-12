@@ -23,4 +23,5 @@
 */*_obj_dir/*
 
 # Add the example folders
-!/examples/mixed_sim/*
+!/examples/mixed_sim_netlist/*
+!/examples/mixed_sim_xschem/*
