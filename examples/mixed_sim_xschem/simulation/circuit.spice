@@ -1,0 +1,52 @@
+** sch_path: /project/examples/mixed_sim_xschem/circuit.sch
+**.subckt circuit
+X2 net11 net3 driver
+V1 net2 GND PULSE(0 3.3 0 1n 1n 100n 200n)
+V2 net1 GND PULSE(3.3 0 220n 1n 1n 1n 1)
+X1 net1 net2 net11 net12 net13 net14 top
+R1 net4 net3 100 m=1
+C1 net4 GND 1n m=1
+X3 net12 net5 driver
+R2 net6 net5 100 m=1
+C2 net6 GND 1n m=1
+X4 net13 net7 driver
+R3 net8 net7 100 m=1
+C3 net8 GND 1n m=1
+X5 net14 net9 driver
+R4 net10 net9 100 m=1
+C4 net10 GND 1n m=1
+**.ends
+
+* expanding   symbol:  driver.sym # of pins=2
+** sym_path: /project/examples/mixed_sim_xschem/driver.sym
+
+pre_osdi /project/examples/mixed_sim_xschem/driver.osdi
+
+.subckt driver driver_in driver_out
+.Model driver_model driver
+N1 driver_in driver_out driver_model
+.ends
+
+
+* expanding   symbol:  top.sym # of pins=6
+** sym_path: /project/examples/mixed_sim_xschem/top.sym
+
+.subckt top rstn clk_div_clk counter_out.3 counter_out.2 counter_out.1 counter_out.0
+.model a2d adc_bridge(in_low=1.1 in_high=2.2)
+.model d2a dac_bridge(out_low=0.0 out_high=3.3)
+
+.model top_model d_cosim simulation=/project/examples/mixed_sim_xschem/top.so
+
+ADC0 rstn d_rstn a2d
+ADC1 clk_div_clk d_clk_div_clk a2d
+
+DAC0 d_counter_out.3 counter_out.3 d2a
+DAC1 d_counter_out.2 counter_out.2 d2a
+DAC2 d_counter_out.1 counter_out.1 d2a
+DAC3 d_counter_out.0 counter_out.0 d2a
+
+Atop [d_rstn d_clk_div_clk] [d_counter_out.3 d_counter_out.2 d_counter_out.1 d_counter_out.0] top_model
+.ends
+
+.GLOBAL GND
+.end

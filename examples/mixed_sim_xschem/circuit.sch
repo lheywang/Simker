@@ -1,0 +1,101 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {}
+V {}
+S {}
+F {}
+E {}
+N -360 -30 -360 20 {lab=#net1}
+N -360 -30 -30 -30 {lab=#net1}
+N -160 -10 -30 -10 {lab=#net2}
+N -160 -10 -160 20 {lab=#net2}
+N -160 80 -160 120 {lab=GND}
+N -360 80 -360 120 {lab=GND}
+N 270 -180 310 -180 {lab=#net3}
+N 370 -180 400 -180 {lab=#net4}
+N 400 -180 400 -170 {lab=#net4}
+N 400 -110 400 -100 {lab=GND}
+N -30 -10 -10 -10 {lab=#net2}
+N -30 -30 -10 -30 {lab=#net1}
+N 270 -70 310 -70 {lab=#net5}
+N 370 -70 400 -70 {lab=#net6}
+N 400 -70 400 -60 {lab=#net6}
+N 400 0 400 10 {lab=GND}
+N 270 40 310 40 {lab=#net7}
+N 370 40 400 40 {lab=#net8}
+N 400 40 400 50 {lab=#net8}
+N 400 110 400 120 {lab=GND}
+N 270 150 310 150 {lab=#net9}
+N 370 150 400 150 {lab=#net10}
+N 400 150 400 160 {lab=#net10}
+N 400 220 400 230 {lab=GND}
+N 30 -30 140 -30 {lab=#net11}
+N 140 -180 140 -30 {lab=#net11}
+N 140 -180 200 -180 {lab=#net11}
+N 200 -180 210 -180 {lab=#net11}
+N 30 -10 160 -10 {lab=#net12}
+N 160 -70 160 -10 {lab=#net12}
+N 160 -70 210 -70 {lab=#net12}
+N 30 10 160 10 {lab=#net13}
+N 160 10 160 40 {lab=#net13}
+N 160 40 210 40 {lab=#net13}
+N 30 30 140 30 {lab=#net14}
+N 140 30 140 150 {lab=#net14}
+N 140 150 210 150 {lab=#net14}
+N 250 150 270 150 {lab=#net9}
+N 250 40 270 40 {lab=#net7}
+N 250 -70 270 -70 {lab=#net5}
+N 250 -180 270 -180 {lab=#net3}
+C {driver.sym} 230 -170 0 0 {name=X2 model=driver}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/vsource.sym} -160 50 0 0 {name=V1 value="PULSE(0 3.3 0 1n 1n 100n 200n)" savecurrent=false}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/vsource.sym} -360 50 0 0 {name=V2 value="PULSE(3.3 0 220n 1n 1n 1n 1)" savecurrent=false}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} -360 120 0 0 {name=l1 lab=GND}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} -160 120 0 0 {name=l2 lab=GND}
+C {top.sym} 10 0 0 0 {name=X1 model=top}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 -180 1 1 {name=R1
+value=100
+footprint=1206
+device=resistor
+m=1}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/capa.sym} 400 -140 0 0 {name=C1
+m=1
+value=1n
+footprint=1206
+device="ceramic capacitor"}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 -100 0 0 {name=l3 lab=GND}
+C {driver.sym} 230 -60 0 0 {name=X3 model=driver}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 -70 1 1 {name=R2
+value=100
+footprint=1206
+device=resistor
+m=1}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/capa.sym} 400 -30 0 0 {name=C2
+m=1
+value=1n
+footprint=1206
+device="ceramic capacitor"}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 10 0 0 {name=l4 lab=GND}
+C {driver.sym} 230 50 0 0 {name=X4 model=driver}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 40 1 1 {name=R3
+value=100
+footprint=1206
+device=resistor
+m=1}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/capa.sym} 400 80 0 0 {name=C3
+m=1
+value=1n
+footprint=1206
+device="ceramic capacitor"}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 120 0 0 {name=l5 lab=GND}
+C {driver.sym} 230 160 0 0 {name=X5 model=driver}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 150 1 1 {name=R4
+value=100
+footprint=1206
+device=resistor
+m=1}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/capa.sym} 400 190 0 0 {name=C4
+m=1
+value=1n
+footprint=1206
+device="ceramic capacitor"}
+C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 230 0 0 {name=l6 lab=GND}

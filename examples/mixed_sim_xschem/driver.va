@@ -1,9 +1,7 @@
 `include "constants.h"
 `include "discipline.h"
 
-module driver(in, out);
-    input in;
-    output out;
+module driver(input in, output out);
     electrical in, out;
 
 
