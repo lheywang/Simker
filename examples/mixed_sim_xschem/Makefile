@@ -13,5 +13,6 @@ clean:
 	rm -rf *.out *.py *.osdi clk_div.v *.so *.sym top.v
 	rm -rf top_obj_dir
 	rm -rf top.va
+	rm -rf simulation/
 
-prepare: top.so driver.osdi base.sch
+prepare: top.so driver.osdi circuit.sch

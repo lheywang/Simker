@@ -6,8 +6,6 @@ S {}
 F {}
 E {}
 N -360 -30 -360 20 {lab=#net1}
-N -360 -30 -30 -30 {lab=#net1}
-N -160 -10 -30 -10 {lab=#net2}
 N -160 -10 -160 20 {lab=#net2}
 N -160 80 -160 120 {lab=GND}
 N -360 80 -360 120 {lab=GND}
@@ -15,8 +13,6 @@ N 270 -180 310 -180 {lab=#net3}
 N 370 -180 400 -180 {lab=#net4}
 N 400 -180 400 -170 {lab=#net4}
 N 400 -110 400 -100 {lab=GND}
-N -30 -10 -10 -10 {lab=#net2}
-N -30 -30 -10 -30 {lab=#net1}
 N 270 -70 310 -70 {lab=#net5}
 N 370 -70 400 -70 {lab=#net6}
 N 400 -70 400 -60 {lab=#net6}
@@ -25,27 +21,24 @@ N 270 40 310 40 {lab=#net7}
 N 370 40 400 40 {lab=#net8}
 N 400 40 400 50 {lab=#net8}
 N 400 110 400 120 {lab=GND}
-N 270 150 310 150 {lab=#net9}
-N 370 150 400 150 {lab=#net10}
-N 400 150 400 160 {lab=#net10}
+N 370 150 400 150 {lab=#net9}
+N 400 150 400 160 {lab=#net9}
 N 400 220 400 230 {lab=GND}
-N 30 -30 140 -30 {lab=#net11}
-N 140 -180 140 -30 {lab=#net11}
-N 140 -180 200 -180 {lab=#net11}
-N 200 -180 210 -180 {lab=#net11}
-N 30 -10 160 -10 {lab=#net12}
-N 160 -70 160 -10 {lab=#net12}
-N 160 -70 210 -70 {lab=#net12}
-N 30 10 160 10 {lab=#net13}
-N 160 10 160 40 {lab=#net13}
-N 160 40 210 40 {lab=#net13}
-N 30 30 140 30 {lab=#net14}
-N 140 30 140 150 {lab=#net14}
-N 140 150 210 150 {lab=#net14}
-N 250 150 270 150 {lab=#net9}
-N 250 40 270 40 {lab=#net7}
-N 250 -70 270 -70 {lab=#net5}
-N 250 -180 270 -180 {lab=#net3}
+N 140 -180 140 -30 {lab=#net10}
+N 160 -70 160 -10 {lab=#net11}
+N 160 10 160 40 {lab=#net12}
+N 140 30 140 150 {lab=#net13}
+N 160 -70 190 -70 {lab=#net11}
+N 160 40 190 40 {lab=#net12}
+N 140 150 190 150 {lab=#net13}
+N 270 150 310 150 {lab=#net14}
+N 140 -180 190 -180 {lab=#net10}
+N 50 30 140 30 {lab=#net13}
+N 50 10 160 10 {lab=#net12}
+N 50 -10 160 -10 {lab=#net11}
+N 50 -30 140 -30 {lab=#net10}
+N -160 -10 -30 -10 {lab=#net2}
+N -360 -30 -30 -30 {lab=#net1}
 C {driver.sym} 230 -170 0 0 {name=X2 model=driver}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/vsource.sym} -160 50 0 0 {name=V1 value="PULSE(0 3.3 0 1n 1n 100n 200n)" savecurrent=false}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/vsource.sym} -360 50 0 0 {name=V2 value="PULSE(3.3 0 220n 1n 1n 1n 1)" savecurrent=false}
