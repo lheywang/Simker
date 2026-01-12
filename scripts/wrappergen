@@ -452,11 +452,13 @@ def generate_analog_spice_string(
     out_str = " ".join(out_name)
 
     return f"""
-pre_osdi {str(include)}
+.control
+  pre_osdi \"{str(include)}\"
+.endc
 
 .subckt {subckt_name} {inp_str} {out_str}
   .Model {model_name} {name}
-  .N1 {inp_str} {out_str} {model_name}
+  N1 {inp_str} {out_str} {model_name}
 .ends
 """
 
@@ -509,10 +511,10 @@ def generate_digital_spice_string(
     # Then, generate DACs and ADCs
     adcs = ""
     for index, inp in enumerate(inp_name):
-        adcs = adcs + f"\n  ADC{index} {inp} d_{inp} a2d"
+        adcs = adcs + f"\n  aADC{index} {inp} d_{inp} a2d"
     dacs = ""
     for index, out in enumerate(out_name):
-        dacs = dacs + f"\n  DAC{index} d_{out} {out} d2a"
+        dacs = dacs + f"\n  aDAC{index} d_{out} {out} d2a"
 
     # Generate the digital names ports :
     d_inp_name = " ".join([f"d_{val}" for val in inp_name])
@@ -523,7 +525,7 @@ def generate_digital_spice_string(
   .model a2d adc_bridge(in_low={low_th} in_high={high_th})
   .model d2a dac_bridge(out_low=0.0 out_high={voltage})
 
-  .model {model_name} d_cosim simulation="{str(include)}"
+  .model {model_name} d_cosim simulation=\"{str(include)}\"
   {adcs}
   {dacs}
 
@@ -575,6 +577,10 @@ def generate_sym(
     TEXT_OFFSET_Y = 4
     TEXT_CHAR_SIZE = 2.75
 
+    # Define symbol minimum size
+    MIN_X = 40.0
+    MIN_Y = 80.0
+
     # Handling the removal of the already_handled nets :
     removals = [net.name for net in internals]
     globnets = [net.name for net in wires]
@@ -590,6 +596,8 @@ def generate_sym(
             else:
                 if port.name.split("#")[-1] not in removed:
                     removed.append(port)
+                else:
+                    retlist.append(port)
         return retlist
 
     # Remove global pins (duplicates, to let the symbol simpler : )
@@ -603,6 +611,14 @@ def generate_sym(
                 i_inputs.insert(0, globnet)
             case "OUTPUT":
                 i_outputs.insert(0, globnet)
+
+        # Creating inputs variables
+    inputs_names = []
+    outputs_names = []
+    for pin in i_inputs:
+        inputs_names.extend(pin.get_ports_name().replace("#", "_").split(" "))
+    for pin in i_outputs:
+        outputs_names.extend(pin.get_ports_name().replace("#", "_").split(" "))
 
     with open(target, "w+") as f:
 
@@ -622,8 +638,10 @@ def generate_sym(
             return ((size - 1) * PITCH) + (2 * OFFSET)
 
         # Then, call the functions and determine the size matrix (with a minimum to 40 to ensure a visible symbol)
-        height = max(get_dimension(len(i_inputs)), get_dimension(len(i_outputs)), 80.0)
-        width = max(0, 80.0)
+        height = max(
+            get_dimension(len(inputs_names)), get_dimension(len(outputs_names)), MIN_X
+        )
+        width = MIN_Y
 
         # Define some extrems :
         x_left = -(width / 2)
@@ -658,13 +676,13 @@ def generate_sym(
 
             return pins
 
-        in_pins = get_pins_position(y_top, x_left, len(i_inputs))
-        out_pins = get_pins_position(y_top, x_right, len(i_outputs))
+        in_pins = get_pins_position(y_top, x_left, len(inputs_names))
+        out_pins = get_pins_position(y_top, x_right, len(outputs_names))
 
         # Then, place the pins on the file :
         def place_pins(
             pins: list[list[int, int]],
-            pin_data: list[dataport],
+            pin_name: list[str],
             direction: str,
             pins_cnt,
             file,
@@ -677,7 +695,7 @@ def generate_sym(
 
                 # Add the pad
                 file.write(
-                    f"B 5 {extrems[0][0]} {extrems[0][1]} {extrems[1][0]} {extrems[1][1]} {"{"}{f"name={pin_data[index].name.replace("#", "_")} dir={direction} seq={pins_cnt}"}{"}"}\n"
+                    f"B 5 {extrems[0][0]} {extrems[0][1]} {extrems[1][0]} {extrems[1][1]} {"{"}{f"name={pin_name[index]} dir={direction} seq={pins_cnt}"}{"}"}\n"
                 )
 
                 # Place the text near the pad :
@@ -685,21 +703,31 @@ def generate_sym(
                     (pin[0] + TEXT_OFFSET_X)
                     if pin[0] < 0
                     else (
-                        pin[0]
-                        - TEXT_OFFSET_X
-                        - (TEXT_CHAR_SIZE * len(pin_data[index].name))
+                        pin[0] - TEXT_OFFSET_X - (TEXT_CHAR_SIZE * len(pin_name[index]))
                     )
                 )
                 file.write(
-                    f"T {"{"}{pin_data[index].name.replace("#", "_")}{"}"} {x_pos} {pin[1] - TEXT_OFFSET_Y} 0 0.1 0.1 {"{}"}\n"
+                    f"T {"{"}{pin_name[index]}{"}"} {x_pos} {pin[1] - TEXT_OFFSET_Y} 0 0.1 0.1 {"{}"}\n"
                 )
                 pins_cnt += 1
             return pins_cnt
 
         # We add a variable to track the seq id
         pins_cnt = 0
-        pins_cnt = place_pins(in_pins, i_inputs, "in", pins_cnt, f)
-        pins_cnt = place_pins(out_pins, i_outputs, "out", pins_cnt, f)
+        pins_cnt = place_pins(
+            in_pins,
+            inputs_names,
+            "in",
+            pins_cnt,
+            f,
+        )
+        pins_cnt = place_pins(
+            out_pins,
+            outputs_names,
+            "out",
+            pins_cnt,
+            f,
+        )
         f.write("\n")
 
         # Add entity name and module :
@@ -765,18 +793,19 @@ def print_command_output(data: str) -> None:
     return
 
 
-def generate_osdi(top: Path) -> None:
+def generate_osdi(binary: Path, sources: Path) -> None:
     """
     This function invoke openvaf-r compiler to build the .osdi file from the .va source.
 
     Arguments :
         -> top : Source verilogA file.
+        -> sources : The file that must be used.
 
     Returns :
         -> None
     """
     # Creating the command to be runned :
-    tool = f"openvaf-r {top}"
+    tool = f"openvaf-r -o {binary} {sources} "
     print(f"Running : {tool}")
 
     # Prepare args and run the command
@@ -813,6 +842,24 @@ def generate_so(top: Path, sources: list[Path]) -> None:
 
     print_command_output(output.decode())
     print_command_output(errors.decode())
+
+    return
+
+
+def print_ports(inputs: list[Path], outputs: list[Path]) -> None:
+    """
+    This small function print the listed ports on a better way. Always nice as user info !
+    """
+
+    print("Found inputs : ")
+    for inp in inputs:
+        print(f"    -> {inp.name.replace("#", "_")}")
+
+    print()
+    print("Found outputs : ")
+    for out in outputs:
+        print(f"    -> {out.name.replace("#", "_")}")
+    print()
 
     return
 
@@ -929,7 +976,7 @@ if __name__ == "__main__":
     tmp.mkdir(parents=True, exist_ok=True)
 
     # Ensure no more than one file in analog mode was passed :
-    if args.analog == "yes":
+    if args.analog:
         if len(args.files) > 1:
             print("In analog mode, no more than one file are handled.")
             exit(1)
@@ -958,10 +1005,11 @@ if __name__ == "__main__":
 
         # Generating names for the analog part :
         sources = sources[0]
-        binary = binary.with_suffix(".osdi")
+        binary = sources.with_suffix(".osdi")
         modName = sources.name.split(".")[0]
-        vlog = extracted[0].with_suffix(".va")
-        top = top.with_suffix(".va")
+        vlog = extracted[0].with_suffix(".v")
+        top = vlog.with_suffix(".va")
+        sym = binary.with_suffix(".sym")
 
         print(f"Converting the {sources.name} file into it's verilog stub ...")
 
@@ -972,8 +1020,10 @@ if __name__ == "__main__":
         binary = binary.with_suffix(".so")
 
     # Parse source files
-    print(f"Parsing files : {" ".join([source.name for source in sources])}")
     inputs, outputs, modules = parse_file(sources)
+
+    # Showing on the terminal the found IOs
+    print_ports(inputs, outputs)
 
     # Optionnaly, match the ports :
     wires = []
@@ -983,13 +1033,14 @@ if __name__ == "__main__":
         inputs, outputs, wires, internals = match_ports(inputs, outputs)
 
     # Generating the top entity :
-    print(f"Generating verilog {top.name.split(".")[0]} module ...")
+    print(f"Generating verilog module : {top}")
     generate_module(
         top, args.analog, modules, inputs, outputs, wires, internals, analog_decl
     )
 
     # Generating the symbol file:
     if args.sym == True:
+        print(f"Generating XSCHEM symbol : {sym}")
         generate_sym(
             sym,
             args.analog,
@@ -1005,7 +1056,7 @@ if __name__ == "__main__":
     if args.no_binary:
         print(f"Generating {binary.name} file ...")
         if args.analog:
-            generate_osdi(top)
+            generate_osdi(binary, top)
         else:
             generate_so(top, sources)
 
