@@ -39,12 +39,10 @@ N 50 -10 160 -10 {lab=#net11}
 N 50 -30 140 -30 {lab=#net10}
 N -160 -10 -30 -10 {lab=#net2}
 N -360 -30 -30 -30 {lab=#net1}
-C {driver.sym} 230 -170 0 0 {name=X2 model=driver}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/vsource.sym} -160 50 0 0 {name=V1 value="PULSE(0 3.3 0 1n 1n 100n 200n)" savecurrent=false}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/vsource.sym} -360 50 0 0 {name=V2 value="PULSE(3.3 0 220n 1n 1n 1n 1)" savecurrent=false}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} -360 120 0 0 {name=l1 lab=GND}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} -160 120 0 0 {name=l2 lab=GND}
-C {top.sym} 10 0 0 0 {name=X1 model=top}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 -180 1 1 {name=R1
 value=100
 footprint=1206
@@ -56,7 +54,6 @@ value=1n
 footprint=1206
 device="ceramic capacitor"}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 -100 0 0 {name=l3 lab=GND}
-C {driver.sym} 230 -60 0 0 {name=X3 model=driver}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 -70 1 1 {name=R2
 value=100
 footprint=1206
@@ -68,7 +65,6 @@ value=1n
 footprint=1206
 device="ceramic capacitor"}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 10 0 0 {name=l4 lab=GND}
-C {driver.sym} 230 50 0 0 {name=X4 model=driver}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 40 1 1 {name=R3
 value=100
 footprint=1206
@@ -80,7 +76,6 @@ value=1n
 footprint=1206
 device="ceramic capacitor"}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 120 0 0 {name=l5 lab=GND}
-C {driver.sym} 230 160 0 0 {name=X5 model=driver}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/res.sym} 340 150 1 1 {name=R4
 value=100
 footprint=1206
@@ -92,3 +87,41 @@ value=1n
 footprint=1206
 device="ceramic capacitor"}
 C {/tools/xschem/usr/local/share/xschem/xschem_library/devices/gnd.sym} 400 230 0 0 {name=l6 lab=GND}
+C {top.sym} 10 0 0 0 {}
+C {driver.sym} 230 -170 0 0 {v \{xschem version=3.4.4 file_version=1.2\}
+K \{\}
+V \{\}
+S \{\}
+E \{\}
+
+L 4 -40.0 20.0 -40.0 -20.0 \{\}
+L 4 -40.0 -20.0 40.0 -20.0 \{\}
+L 4 40.0 -20.0 40.0 20.0 \{\}
+L 4 40.0 20.0 -40.0 20.0 \{\}
+
+B 5 -42.5 -12.5 -37.5 -7.5 \{name=driver_in dir=in seq=0\}
+T \{driver_in\} -35.0 -14.0 0 0.1 0.1 \{\}
+B 5 37.5 -12.5 42.5 -7.5 \{name=driver_out dir=out seq=1\}
+T \{driver_out\} 7.5 -14.0 0 0.1 0.1 \{\}
+
+T \{driver\} -16.5 -16.5 0 0 0.2 0.2
+
+G \{type=subcircuit 
+format="@name @pinlist @model"
+template="name=X1 model=driver"
+spice_sym_def="
+.control
+  pre_osdi driver.osdi
+.endc
+
+.subckt driver driver_in driver_out
+  .Model driver_model driver
+  N1 driver_in driver_out driver_model
+.ends
+"
+\}
+
+}
+C {driver.sym} 230 -60 0 0 {}
+C {driver.sym} 230 50 0 0 {}
+C {driver.sym} 230 160 0 0 {}

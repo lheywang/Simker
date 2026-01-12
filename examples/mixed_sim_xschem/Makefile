@@ -14,5 +14,6 @@ clean:
 	rm -rf top_obj_dir
 	rm -rf top.va
 	rm -rf simulation/
+	rm -rf *.txt *.spice
 
 prepare: top.so driver.osdi circuit.sch
