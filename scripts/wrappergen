@@ -17,6 +17,7 @@
 import argparse
 import textwrap
 from pathlib import Path
+import shutil
 import datetime
 import subprocess
 import shlex
@@ -770,7 +771,8 @@ def print_command_output(data: str) -> None:
     """
     lines = data.split("\n")
 
-    N = 120
+    size = shutil.get_terminal_size(fallback=(80, 20))
+    N = size[0] - 10
 
     print(">")
     for line in lines:
