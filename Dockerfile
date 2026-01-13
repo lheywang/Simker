@@ -365,12 +365,6 @@ ENV XSCHEM_LIBRARY_PATH="/tools/xschem/usr/local/share/xschem/systemlib/:${XSCHE
 ENV NGSPICE_LIB_DIR=/tools/lib/
 
 # ===============================================================================================
-# Final cleanup
-# ===============================================================================================
-# Cleaning some things
-RUN rm -rf /var/lib/apt/lists/*
-
-# ===============================================================================================
 # Import binaries, tools and static data
 # ===============================================================================================
 # Creating folders : 
@@ -407,6 +401,9 @@ RUN git clone --recursive -j 4  https://github.com/PyHDI/Pyverilog.git pyverilog
 WORKDIR /tools/pyverilog
 RUN python3 setup.py install
 
+# Install the oh-my-posh terminal (to get a thing usable...)
+RUN curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin
+
 # ===============================================================================================
 # Running install script, to gather some versions : 
 # ===============================================================================================
@@ -414,8 +411,33 @@ RUN python3 setup.py install
 RUN /tools/scripts/getversions
 
 # ===============================================================================================
-# Set docker entrypoint
+# Configure a new user with permissions (will make link between things easier)
+# ===============================================================================================
+# Create the user
+RUN groupadd -g 1000 designer 
+RUN useradd -m -u 1000 -g designer -s /bin/bash designer
+
+# Enable the user the folders where it need : 
+RUN chmod -R 755 /tools
+RUN chmod -R 755 /examples
+RUN chmod -R 777 /project
+
+# Install oh-my-posh config
+RUN echo "eval $(oh-my-posh init bash --config atomic)"
+
+# ===============================================================================================
+# Final cleanup
+# ===============================================================================================
+# Cleaning some things
+RUN rm -rf /var/lib/apt/lists/*
+
+# ===============================================================================================
+# Set docker entrypoint and active user 
 # ===============================================================================================
 # Setting CMD / ENTRYPOINT
 ENTRYPOINT ["/bin/sh"]
 CMD ["/tools/scripts/simker"]
+
+# Setting up user
+USER designer
+WORKDIR /project
