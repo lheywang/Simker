@@ -44,7 +44,7 @@ SHELL_FUNC="
 # --- SIMKER START ---
 simker() {
     local current_dir=\$(pwd)
-    PROJECT_DIR=\"\$current_dir\" docker-compose -f $CONFIG_DIR/docker-compose.yml run --rm tool \"\$@\"
+    PROJECT_DIR=\"\$current_dir\" docker-compose -f $CONFIG_DIR/docker-compose.yml run --rm $IMAGE_NAME \"\$@\"
 }
 # --- SIMKER END ---
 "
