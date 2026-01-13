@@ -23,10 +23,10 @@ WORKDIR /work
 
 # Updating OS to the latest versions
 RUN apt-get update --fix-missing && apt-get upgrade -y --fix-missing 
-RUN apt-get install -y -f
+RUN apt-get update && apt-get install -y -f
 
 # Install software build dependencies
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     cmake \
     make \
     texinfo \
@@ -38,12 +38,13 @@ RUN apt-get install -y --fix-missing \
     git \
     wget \
     ccache \
-    curl
+    curl \
+    unzip
 
 # -----------------------------------------------------------------------------------------------
 # Verilator deps : 
 # -----------------------------------------------------------------------------------------------
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     help2man \
     perl \
     python3 \
@@ -65,7 +66,7 @@ RUN apt-get install -y --fix-missing \
 # -----------------------------------------------------------------------------------------------
 # GHDL deps : 
 # -----------------------------------------------------------------------------------------------
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     gnat \
     libgmp-dev \
     libmpfr-dev \
@@ -74,7 +75,7 @@ RUN apt-get install -y --fix-missing \
 # -----------------------------------------------------------------------------------------------
 # NGSPICE deps
 # -----------------------------------------------------------------------------------------------
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     libtool \
     libxaw7-dev \
     libreadline-dev
@@ -82,7 +83,7 @@ RUN apt-get install -y --fix-missing \
 # -----------------------------------------------------------------------------------------------
 # XSCHEM deps :
 # -----------------------------------------------------------------------------------------------
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     mawk \
     libx11-dev \
     libxpm-dev \
@@ -96,13 +97,13 @@ RUN apt-get install -y --fix-missing \
 # -----------------------------------------------------------------------------------------------
 # GAW3 deps :
 # -----------------------------------------------------------------------------------------------
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     libgtk-4-dev
 
 # -----------------------------------------------------------------------------------------------
 # GTKWave deps :
 # -----------------------------------------------------------------------------------------------
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     meson \
     gperf \
     flex \
@@ -113,13 +114,14 @@ RUN apt-get install -y --fix-missing \
     libbz2-dev \
     libjudy-dev \
     liblzma-dev \
-    libgirepository1.0-dev
+    libgirepository1.0-dev \
+    libjson-glib-dev
 
 # -----------------------------------------------------------------------------------------------
 # OpenVAF-Reloaded deps
 # -----------------------------------------------------------------------------------------------
 # Get C compilers
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     llvm \
     clang
 
@@ -284,8 +286,8 @@ RUN strip /tools/**/bin/* || true
 FROM ubuntu:24.04 AS runtime
 
 # Updates and runtime libs install
-RUN apt-get update && apt-get upgrade -y --fix-missing
-RUN apt-get install -y \
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get update && apt-get install -y --fix-missing \
     libx11-6 \
     libxrender1 \
     libxext6 \
@@ -298,15 +300,18 @@ RUN apt-get install -y \
     ca-certificates
 
 # Add a nice utility to edit files from the docker
-RUN apt-get install -y\
-   nano \
-   git
+RUN apt-get update && apt-get install -y --fix-missing \
+    nano \
+    git \
+    curl \
+    wget \
+    unzip
 
 # ===============================================================================================
 # Install dependencies
 # ===============================================================================================
 # Installing runtime dependencies
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     libgnat-13 \  
     tcl8.6 \
     tk8.6 \
@@ -331,7 +336,7 @@ RUN apt-get install -y --fix-missing \
 # Display configuration
 # ===============================================================================================
 # Installing deps 
-RUN apt-get install -y --fix-missing \
+RUN apt-get update && apt-get install -y --fix-missing \
     xauth \
     x11-apps \
     libxext6 \
@@ -353,6 +358,7 @@ ENV PATH="/tools/verilator/bin:${PATH}"
 ENV PATH="/tools/xschem/usr/local/bin:${PATH}"
 ENV PATH="/tools/openvaf-r/bin/:${PATH}"
 ENV PATH="/tools/scripts/:${PATH}"
+ENV PATH="/home/designer/.local/bin/:${PATH}"
 
 # Adding a variable to make sure xschem can start
 ENV XSCHEM_SHAREDIR="/tools/xschem/usr/local/share/xschem"
@@ -371,7 +377,7 @@ ENV NGSPICE_LIB_DIR=/tools/lib/
 RUN mkdir -p /tools
 RUN mkdir -p /tools/scripts
 RUN mkdir -p /tools/doc
-
+RUN mkdir -p /workspace
 RUN mkdir -p /examples
 
 RUN mkdir -p /tools/lib
@@ -401,9 +407,6 @@ RUN git clone --recursive -j 4  https://github.com/PyHDI/Pyverilog.git pyverilog
 WORKDIR /tools/pyverilog
 RUN python3 setup.py install
 
-# Install the oh-my-posh terminal (to get a thing usable...)
-RUN curl -s https://ohmyposh.dev/install.sh | bash -s -- -d /usr/local/bin
-
 # ===============================================================================================
 # Running install script, to gather some versions : 
 # ===============================================================================================
@@ -413,17 +416,13 @@ RUN /tools/scripts/getversions
 # ===============================================================================================
 # Configure a new user with permissions (will make link between things easier)
 # ===============================================================================================
-# Create the user
-RUN groupadd -g 1000 designer 
-RUN useradd -m -u 1000 -g designer -s /bin/bash designer
+# Create the user 
+RUN useradd -ms /bin/bash designer
 
 # Enable the user the folders where it need : 
 RUN chmod -R 755 /tools
 RUN chmod -R 755 /examples
-RUN chmod -R 777 /project
-
-# Install oh-my-posh config
-RUN echo "eval $(oh-my-posh init bash --config atomic)"
+RUN chmod -R 777 /workspace
 
 # ===============================================================================================
 # Final cleanup
@@ -433,11 +432,15 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # ===============================================================================================
 # Set docker entrypoint and active user 
-# ===============================================================================================
+# ================================================================================================
+# Setting up user
+USER designer
+WORKDIR /workspace
+
+# Install oh-my-posh config
+RUN curl -s https://ohmyposh.dev/install.sh | bash -s
+RUN echo 'eval $(oh-my-posh init bash --config atomic)' >> /home/designer/.bashrc
+
 # Setting CMD / ENTRYPOINT
 ENTRYPOINT ["/bin/sh"]
 CMD ["/tools/scripts/simker"]
-
-# Setting up user
-USER designer
-WORKDIR /project
