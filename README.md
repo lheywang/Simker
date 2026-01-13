@@ -15,31 +15,35 @@ hassle of dependency management.
 
 - Interactive Help: A custom CLI help system to guide you through the tools.
 
+- Compatible with a large panel of OS : Since it's inside a docker container, which run Ubuntu 24.04,
+  you can basically deploy the tool on any OS that support docker.
+
 ## Included Toolbox 🛠:
 
 Simker comes pre-packaged with industry-standard open-source EDA tools:
 
-| Category              | Tool      | Description                                                                 |
-| --------------------- | --------- | --------------------------------------------------------------------------- |
-| SPICE Simulation      | NGSPICE   | The standard for open-source analog circuit simulation.                     |
-| VHDL Simulation       | GHDL      | Fast VHDL simulator (GCC/LLVM backend).                                     |
-| Verilog/SystemVerilog | Verilator | The fastest Verilog/SystemVerilog simulator.                                |
-| Verilog-A             | OpenVAF-R | Verilog-A compiler for compact model / custom analog functions integration. |
-| Schematic Capture     | XSchem    | Hierarchical schematic capture for VLSI/mixed-signal.                       |
-| Digital Viewer        | GTKWave   | Fully featured wave viewer for Unix and Win32.                              |
-| Analog Viewer         | GAW       | Gtk Analog Wave viewer for displaying SPICE data.                           |
+| Category              | Tool       | Description                                                                 |
+| --------------------- | ---------- | --------------------------------------------------------------------------- |
+| SPICE Simulation      | NGSPICE    | The standard for open-source analog circuit simulation.                     |
+| VHDL Simulation       | GHDL       | Fast VHDL simulator (GCC/LLVM backend).                                     |
+| Verilog/SystemVerilog | Verilator  | The fastest Verilog/SystemVerilog simulator.                                |
+| Verilog-A             | OpenVAF-R  | Verilog-A compiler for compact model / custom analog functions integration. |
+| Schematic Capture     | XSchem     | Hierarchical schematic capture for VLSI/mixed-signal.                       |
+| Digital Viewer        | GTKWave    | Fully featured wave viewer for Unix and Win32.                              |
+| Analog Viewer         | GAW        | Gtk Analog Wave viewer for displaying SPICE data.                           |
+| Terminal              | oh-my-posh | A better terminal than the default one in docker                            |
 
-And some custom utilities to link theses tools : 
+And some custom utilities to link theses tools :
 
-| Tool | Description | 
-| ---- | ---- |
-| vhdl2verilog | A script to convert VHDL files into Verilog. Based on the GHDL synth features !|
-| wrappengen | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
+| Tool         | Description                                                                                                       |
+| ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| vhdl2verilog | A script to convert VHDL files into Verilog. Based on the GHDL synth features !                                   |
+| wrappengen   | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
 
 > [!NOTE]
 > And, what's even better ? Simker come with an integrated X11 server, thus, GUI apps will work out of the box !
 
-## Getting Started 🚀 : 
+## Getting Started 🚀 :
 
 1. Build the Image
 
@@ -64,7 +68,7 @@ To run the container and access the terminal:
 make run
 ```
 
-or 
+or
 
 ```sh
 docker run -it --rm \
@@ -84,16 +88,15 @@ Once inside the container, you are greeted by the Simker shell. We have included
 The Simker CLI
 
 Just type simker at any time to see the welcome screen and status:
+
 ```
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%           ________  __     ___      ___  __   ___  _______   _______        %       
-%         /"       )|" \   |"  \    /"  ||/"| /  ")/"     "| /"      \        %
-%        (:   \___/ ||  |   \   \  //   |(: |/   /(: ______)|:        |       %
-%         \___  \   |:  |   /\\  \/.    ||    __/  \/    |  |_____/   )       %
-%          __/  \\  |.  |  |: \.        |(// _  \  // ___)_  //      /        %
-%         /" \   :) /\  |\ |.  \    /:  ||: | \  \(:      "||:  __   \        %
-%        (_______/ (__\_|_)|___|\__/|___|(__|  \__)\_______)|__|  \___)       %
-%                                                                             %
+%             ███████╗██╗███╗   ███╗██╗  ██╗███████╗██████╗     ██╗           %            
+%             ██╔════╝██║████╗ ████║██║ ██╔╝██╔════╝██╔══██╗    ██║           %
+%             ███████╗██║██╔████╔██║█████╔╝ █████╗  ██████╔╝    ██║           %
+%             ╚════██║██║██║╚██╔╝██║██╔═██╗ ██╔══╝  ██╔══██╗    ╚═╝           %
+%             ███████║██║██║ ╚═╝ ██║██║  ██╗███████╗██║  ██║    ██╗           %
+%             ╚══════╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
 % Welcome on the SIMKER Docker container. You can now begin creatin           %
@@ -129,37 +132,44 @@ Just type simker at any time to see the welcome screen and status:
 
 ### Tool Specific Help
 
-Don't remember the flags for ghdl or ngspice? I've wrapped the help commands for you, 
+Don't remember the flags for ghdl or ngspice? I've wrapped the help commands for you,
 with a nice link to the official help page, which will be more than complete !
 
 General Help: Type
-```sh 
+
+```sh
 simker_help
 ```
 
-Specific Tool Help: Type 
-```sh 
+Specific Tool Help: Type
+
+```sh
 simker_help [tool_name]
 ```
 
-Example: 
+Example:
+
 ```sh
 simker_help ngspice
 ...
 simker_help ghdl
 ```
 
-Check Versions: Type 
+Check Versions: Type
+
 ```sh
 simker_help versions
 ```
+> [!NOTE]
+> For the even more nerd users, there's also man pages for the different tools (built by the developper, or custom ones).
 
 ## Workflow Example 🧩 :
 
 Simker is designed for a mixed-signal flow. Here is a typical workflow you can achieve inside the container:
 But, anyway, it can be used for pure analog or pure digital design without any major flaws.
 
-The steps are : 
+The steps are :
+
 - Write and test each block separately (digital, analog...). You can count on helper scripts here to help you !
 - Assemble theses blocks in the global simulation without XSCHEM.
 - Launch NGSPICE and wait !
@@ -168,12 +178,12 @@ The steps are :
 ## Author & License 📝
 
 Leonard HEYWANG
+
 - leonard.heywang@proton.me
 
 Project initiated: 03/01/2026
 
 Distributed under the GNU GPL 3.0 License. See LICENSE for more information.
 
-> [!WARNING]
-> **⚠️ Technical Note on Display**
+> [!WARNING] > **⚠️ Technical Note on Display**
 > If you encounter "Error: cannot open display", please ensure your X11 forwarding is configured correctly on your host machine.
