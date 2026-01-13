@@ -1,0 +1,20 @@
+.\" Manpage for wrappergen
+.TH VHDL2VERILOG 1 "January 2026" "1.0" "User Commands"
+.SH NAME
+vhdl2verilog \- A script to synthetize verilog from VHDL descriptions.
+.SH SYNOPSIS
+.B vhdl2verilog
+\fIfile\fR
+.SH DESCRIPTION
+.B WrapperGen
+vhdl2verilog use GHDL in the background to synthetize a verilog file from a VHDL design.
+.SH ARGUMENTS
+.TP
+.B file
+The input VHDL file to be combined synthetized.
+.SH NOTES
+.SS Generated files
+The file that will be generated may not countain the original variables names, as well as bus width (expanded to 32 bits).
+The functionnality shouldn't be affected, but you're warned.
+.SH AUTHOR
+Leonard HEYWANG <leonard.heywang@proton.me>

@@ -1,0 +1,56 @@
+.\" Manpage for ghdl
+.TH GHDL 1 "January 2026" "1.0" "User Commands"
+.SH NAME
+ghdl \- VHDL Simulator (GCC 12.5.1 Backend)
+.SH SYNOPSIS
+.B ghdl
+\fIcommand\fR [\fIoptions\fR] \fIfiles\fR...
+.SH DESCRIPTION
+.B GHDL
+is an open-source VHDL simulator supporting the IEEE 1076 VHDL standards (1987, 1993, and 2002).
+.PP
+This distribution is based on the \fBGCC 12.5\fR backend. Unlike interpreted simulators or those with arbitrary limits, this allows GHDL to handle very large designs effectively, limited only by system memory.
+.PP
+GHDL typically works in a three-step process: \fBAnalysis\fR (compilation), \fBElaboration\fR (linking), and \fBRun\fR (simulation).
+.SH COMMANDS
+.TP
+.BR \-a ", " \-\-analyze " \fIfile.vhd\fR"
+Analyzes (compiles) the specified VHDL source files. This step checks syntax and adds the unit to the library.
+.TP
+.BR \-e ", " \-\-elaborate " \fIentity\fR"
+Elaborates the design hierarchy. This builds the executable simulation model for the specified top-level entity (usually a testbench).
+.TP
+.BR \-r ", " \-\-run " \fIentity\fR"
+Runs the elaborated entity.
+.SH EXAMPLES
+.SS Standard Workflow
+To simulate a design with a source file \fImy_cpu.vhd\fR and a testbench \fItb_cpu.vhd\fR (where the entity name is \fItb_cpu\fR):
+.PP
+.B 1. Analyze:
+.br
+$ ghdl \-a my_cpu.vhd tb_cpu.vhd
+.PP
+.B 2. Elaborate:
+.br
+$ ghdl \-e tb_cpu
+.PP
+.B 3. Run:
+.br
+$ ghdl \-r tb_cpu
+.SS Usage inside the docker container
+GHDL is mostly used inside the docker container as a tool to synthetize VHDL into verilog.
+See the vhdl2verilog man page for help.
+.SH DOCUMENTATION
+Full documentation and quick-start examples are available at:
+.br
+\fIhttps://ghdl-rad.readthedocs.io/en/latest/examples/quick_start/README.html\fR
+.PP
+For a complete list of advanced options (compilation flags, warnings, etc.), use:
+.br
+$ ghdl \-\-help
+.SH SEE ALSO
+.BR gtkwave (1),
+.BR gcc (1), 
+.BR vhdl2verilog (1)
+.SH AUTHOR
+Leonard HEYWANG <leonard.heywang@proton.me>
