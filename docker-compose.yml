@@ -1,17 +1,13 @@
-version: '3.8'
-
 services:
   simker:
-    container-name: simker
     build:
       context: .
       dockerfile: Dockerfile
-    network-mode: host
     volumes:
-      - ./:/project
-      - /tmp/.X11-unix:/tmp/.X11-unix 
+      - ./:/workspace
+      - /tmp/.X11-unix:/tmp/.X11-unix
     environment:
       - DISPLAY=${DISPLAY}
       - TZ=Europe/Paris
-    working_dir: /project
+    working_dir: /workspace
     user: designer
