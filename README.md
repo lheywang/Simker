@@ -5,6 +5,17 @@ It aggregates the best open-source tools for analog and digital design into a si
 portable environment, allowing you to create "electronics for tomorrow" without the
 hassle of dependency management.
 
+--- 
+
+This project started as I was tired of using the university's tools which are heavy, 
+require a remote desktop connection and are WAYYY too costly for a student economy.
+So, I looked for open-source alternatives for a student, and, well, didn't find anything really
+convincing.
+- Qucs-s ? I like it, but can't run mixed-signals simulations.
+- QSPICE ? I also like it, but, only available under Windows.
+
+So, I started this project as a personnal tool, a very simple docker that did just grown a... bit too much. And since I though it was cool to share it, here we are !
+
 ## Key Features⚡:
 
 - Zero-Dependency Setup: Run complex EDA tools without cluttering your host OS.
@@ -176,12 +187,12 @@ The steps are :
 ## Author & License 📝
 
 Leonard HEYWANG
-
 - leonard.heywang@proton.me
 
 Project initiated: 03/01/2026
 
 Distributed under the GNU GPL 3.0 License. See LICENSE for more information.
 
-> [!WARNING] > **⚠️ Technical Note on Display**
+
+> [!WARNING]
 > If you encounter "Error: cannot open display", please ensure your X11 forwarding is configured correctly on your host machine.
