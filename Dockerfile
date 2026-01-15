@@ -371,16 +371,29 @@ ENV XSCHEM_LIBRARY_PATH="/tools/xschem/usr/local/share/xschem/systemlib/:${XSCHE
 ENV NGSPICE_LIB_DIR=/tools/lib/
 
 # ===============================================================================================
+# Install final tools 
+# ===============================================================================================
+# Prepare /tools folder
+RUN mkdir -p /tools
+
+# Install Pyverilog parser
+RUN mkdir -p /tools/pyverilog
+WORKDIR /tools
+RUN git clone --recursive -j 4  https://github.com/PyHDI/Pyverilog.git pyverilog
+
+# Launch install
+WORKDIR /tools/pyverilog
+RUN python3 setup.py install
+
+# ===============================================================================================
 # Import binaries, tools and static data
 # ===============================================================================================
 # Creating folders : 
-RUN mkdir -p /tools
 RUN mkdir -p /tools/scripts
+RUN mkdir -p /tools/lib
 RUN mkdir -p /tools/doc
 RUN mkdir -p /workspace
 RUN mkdir -p /examples
-
-RUN mkdir -p /tools/lib
 
 # Import scripts
 ADD ./scripts /tools/scripts
@@ -394,18 +407,6 @@ ADD ./lib /tools/lib
 
 # Copy binaries (last step, to let all the previous step run while building the first image)
 COPY --from=build /tools /tools
-
-# ===============================================================================================
-# Install final tools 
-# ===============================================================================================
-# Install Pyverilog parser
-RUN mkdir -p /tools/pyverilog
-WORKDIR /tools
-RUN git clone --recursive -j 4  https://github.com/PyHDI/Pyverilog.git pyverilog
-
-# Launch install
-WORKDIR /tools/pyverilog
-RUN python3 setup.py install
 
 # ===============================================================================================
 # Running install script, to gather some versions : 
@@ -437,7 +438,7 @@ RUN rm -rf /var/lib/apt/lists/*
 USER designer
 WORKDIR /workspace
 
-# Install oh-my-posh config
+# Install oh-my-posh config (This must be done as user, to, here we don't have others choices)
 RUN curl -s https://ohmyposh.dev/install.sh | bash -s
 RUN echo 'eval $(oh-my-posh init bash --config atomic)' >> /home/designer/.bashrc
 
