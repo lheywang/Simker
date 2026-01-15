@@ -459,7 +459,7 @@ def generate_analog_spice_string(
     inp_str = " ".join(inp_name)
     out_str = " ".join(out_name)
 
-    return f"""
+    return f"""\
 .control
   pre_osdi {str(include.relative_to(sym.parent))}
 .endc
@@ -468,6 +468,7 @@ def generate_analog_spice_string(
   .Model {model_name} {name}
   N1 {inp_str} {out_str} {model_name}
 .ends
+
 """
 
 
@@ -529,7 +530,7 @@ def generate_digital_spice_string(
     d_inp_name = " ".join([f"d_{val}" for val in inp_name])
     d_out_name = " ".join([f"d_{val}" for val in out_name])
 
-    return f"""
+    return f"""\
 .subckt {subckt_name} {inp_str} {out_str}
   .model a2d adc_bridge(in_low={low_th} in_high={high_th})
   .model d2a dac_bridge(out_low=0.0 out_high={voltage})
@@ -540,6 +541,7 @@ def generate_digital_spice_string(
 
   A{name} [{d_inp_name}] [{d_out_name}] {model_name}
 .ends
+
 """
 
 
@@ -634,14 +636,17 @@ def generate_sym(
         # Append the basic elements of the file :
         f.write("v {xschem version=3.4.4 file_version=1.2}\n")
 
-        # Append some data :
-        f.write("K {}\n")
+        # Append model parameters : 
+        f.write(f"G {"{"}type=subcircuit \n")
+        f.write('format="@name @pinlist @symname"\n')
+        f.write(f'template="name=X"\n')
+        f.write(f'spice_sym_def=".include \"{str(target.with_suffix(".spice"))}\""\n')
+        f.write("}\n")
         f.write("V {}\n")
         f.write("S {}\n")
         f.write("E {}\n")
-        f.write("S {type=subcircuit} \n\n")
 
-        # Get sizes of the symbol box :
+        # Then, draw the global boundaries and pins : 
         def get_dimension(size: int) -> int:
             return ((size - 1) * PITCH) + (2 * OFFSET)
 
@@ -669,7 +674,6 @@ def generate_sym(
             f.write(
                 f"L 4 {coordinate[0]} {coordinate[1]} {coordinate[2]} {coordinate[3]} {"{}"}\n"
             )
-        f.write("\n")
 
         # Then, create the coordinates for the pins :
         def get_pins_position(
@@ -736,23 +740,14 @@ def generate_sym(
             pins_cnt,
             f,
         )
-        f.write("\n")
 
         # Add entity name and module :
         name = str(target.name).split(".")[0]
         f.write(
-            f"T {"{"}{name}{"}"} {0 - (TEXT_CHAR_SIZE * len(name))} {0 - (TEXT_CHAR_SIZE * len(name))} 0 0 0.2 0.2\n"
+            f"T {"{"}{name}{"}"} {0 - (TEXT_CHAR_SIZE * len(name))} {0 - (TEXT_CHAR_SIZE * len(name))} 0 0 0.2 0.2 {"{}"}\n"
         )
 
-        # Finally, append the spice attributes to the model :
-        f.write("\n")
-        f.write(f"K {"{"}type=subcircuit \n")
-        f.write('format="@name @pinlist @model"\n')
-        f.write(f'template="name=X1 model={str(target.name).split(".")[0]}"\n')
-        f.write(f'spice_sym_def=".include {target.with_suffix(".spice")}"\n')
-        f.write("}\n\n")
-
-    # Add the spice string :
+    # Before exit, generate the spice string and write it to a file : 
     spice_string = ""
     if analog == True:
         spice_string = generate_analog_spice_string(
