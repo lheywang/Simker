@@ -305,7 +305,8 @@ RUN apt-get update && apt-get install -y --fix-missing \
     git \
     curl \
     wget \
-    unzip
+    unzip \
+    xterm
 
 # ===============================================================================================
 # Install dependencies
