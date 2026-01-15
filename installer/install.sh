@@ -46,12 +46,13 @@ echo -e "${BLUE}[5/5] Updating Shell Configuration...${NC}"
 SHELL_FUNC="
 # --- SIMKER START ---
 simker() {
-    # We point strictly to the installed location's docker-compose file
-    # But we map the CURRENT directory (\$(pwd)) as the workspace
-    PROJECT_DIR=\"\$(pwd)\" docker-compose \
-        -f \"$INSTALL_DIR/docker-compose.yml\" \
-        --project-directory \"$INSTALL_DIR\" \
-        run --rm $APP_NAME \"\$@\"
+    local current_work_dir=\"\$(pwd)\"
+
+    #    PROJECT_DIR=... tells Docker what volume to mount
+    PROJECT_DIR=\"\$current_work_dir\" docker-compose \\
+        -f \"$INSTALL_DIR/docker-compose.yml\" \\
+        --project-directory \"$INSTALL_DIR\" \\
+        run --rm simker \"\$@\"
 }
 # --- SIMKER END ---
 "
