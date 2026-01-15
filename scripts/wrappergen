@@ -128,6 +128,7 @@ def va2v(input: Path, output: Path) -> str:
 
 def parse_file(
     files: list[Path],
+    temp_folder: Path,
 ) -> tuple[list[dataport], list[dataport], list[str]]:
     """
     This function parse verilog files and list the IO ports and found modules.
@@ -150,7 +151,12 @@ def parse_file(
 
     for file in files:
         print(f"Parsing file : {str(file)} ...")
-        ast, directives = parse([f"{str(file)}"])
+        ast, directives = parse(
+            [f"{str(file)}"],
+            preprocess_include=[],
+            preprocess_define=[],
+            outputdir=str(temp_folder),
+        )
 
         for item in ast.description.definitions:
             if not isinstance(item, ModuleDef):
@@ -418,7 +424,7 @@ def generate_module(
 
 
 def generate_analog_spice_string(
-    sym : Path, 
+    sym: Path,
     target: Path,
     name: str,
     inputs: list[dataport],
@@ -466,7 +472,7 @@ def generate_analog_spice_string(
 
 
 def generate_digital_spice_string(
-    sym: Path, 
+    sym: Path,
     target: Path,
     name: str,
     inputs: list[dataport],
@@ -1024,7 +1030,7 @@ if __name__ == "__main__":
         binary = binary.with_suffix(".so")
 
     # Parse source files
-    inputs, outputs, modules = parse_file(sources)
+    inputs, outputs, modules = parse_file(sources, Path(tmp))
 
     # Showing on the terminal the found IOs
     print_ports(inputs, outputs)

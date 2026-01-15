@@ -11,4 +11,4 @@ services:
       - TZ=Europe/Paris
       - TERM=xterm-256color
     working_dir: /workspace
-    user: designer
+    user: ubuntu

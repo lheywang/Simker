@@ -358,7 +358,7 @@ ENV PATH="/tools/verilator/bin:${PATH}"
 ENV PATH="/tools/xschem/usr/local/bin:${PATH}"
 ENV PATH="/tools/openvaf-r/bin/:${PATH}"
 ENV PATH="/tools/scripts/:${PATH}"
-ENV PATH="/home/designer/.local/bin/:${PATH}"
+ENV PATH="/home/ubuntu/.local/bin/:${PATH}"
 
 # Adding a variable to make sure xschem can start
 ENV XSCHEM_SHAREDIR="/tools/xschem/usr/local/share/xschem"
@@ -417,9 +417,6 @@ RUN /tools/scripts/getversions
 # ===============================================================================================
 # Configure a new user with permissions (will make link between things easier)
 # ===============================================================================================
-# Create the user 
-RUN useradd -ms /bin/bash designer
-
 # Enable the user the folders where it need : 
 RUN chmod -R 755 /tools
 RUN chmod -R 755 /examples
@@ -435,12 +432,12 @@ RUN rm -rf /var/lib/apt/lists/*
 # Set docker entrypoint and active user 
 # ================================================================================================
 # Setting up user
-USER designer
+USER ubuntu
 WORKDIR /workspace
 
 # Install oh-my-posh config (This must be done as user, to, here we don't have others choices)
 RUN curl -s https://ohmyposh.dev/install.sh | bash -s
-RUN echo 'eval $(oh-my-posh init bash --config atomic)' >> /home/designer/.bashrc
+RUN echo 'eval $(oh-my-posh init bash --config atomic)' >> $HOME/.bashrc
 
 # Setting CMD / ENTRYPOINT
 ENTRYPOINT ["/bin/sh"]

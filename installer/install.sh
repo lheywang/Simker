@@ -30,7 +30,7 @@ echo -e "${GREEN}      Source code installed.${NC}"
 # 3. Build Docker Image (FROM the safe location)
 echo -e "${BLUE}[3/5] Building Docker Image...${NC}"
 cd "$INSTALL_DIR" || exit 1
-docker build -t "my_wrapper_tool:latest" .
+docker build -t "$APP_NAME" .
 if [ $? -ne 0 ]; then
     echo -e "${RED}[ERROR] Docker build failed.${NC}"
     exit 1
@@ -52,7 +52,7 @@ simker() {
     PROJECT_DIR=\"\$current_work_dir\" docker-compose \\
         -f \"$INSTALL_DIR/docker-compose.yml\" \\
         --project-directory \"$INSTALL_DIR\" \\
-        run --rm simker \"\$@\"
+        run --rm $APP_NAME \"\$@\"
 }
 # --- SIMKER END ---
 "
