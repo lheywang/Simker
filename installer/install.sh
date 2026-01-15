@@ -2,72 +2,75 @@
 
 # --- Configuration ---
 APP_NAME="simker"
-IMAGE_NAME="simker:latest" # Match this with your Dockerfile
+# Standard Linux location for user-specific apps
+INSTALL_DIR="$HOME/.local/share/$APP_NAME"
 CONFIG_DIR="$HOME/.config/$APP_NAME"
-MAN_PAGE="simker.1"
+BIN_DIR="$HOME/.local/bin"
 
 # --- Colors ---
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 RED='\033[0;31m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-echo -e "${BLUE}=== Installing $APP_NAME Environment ===${NC}"
+echo -e "${BLUE}=== Installing $APP_NAME System-Wide ===${NC}"
 
-# 1. Check Dependencies
-if ! command -v docker &> /dev/null; then
-    echo -e "${RED}[ERROR] Docker is not installed. Please install Docker first.${NC}"
-    exit 1
+# 1. Clean previous installs
+if [ -d "$INSTALL_DIR" ]; then
+    echo -e "${BLUE}[1/5] Removing old installation...${NC}"
+    rm -rf "$INSTALL_DIR"
 fi
 
-# 2. Build Docker Image
-echo -e "${BLUE}[1/4] Building Docker Image...${NC}"
-docker build -t "$IMAGE_NAME" .
+# 2. Copy Source Code to Safe Location
+echo -e "${BLUE}[2/5] Installing source code to $INSTALL_DIR...${NC}"
+mkdir -p "$INSTALL_DIR"
+rsync -av --progress . "$INSTALL_DIR" --exclude .git --exclude .vscode --exclude tmp
+echo -e "${GREEN}      Source code installed.${NC}"
+
+# 3. Build Docker Image (FROM the safe location)
+echo -e "${BLUE}[3/5] Building Docker Image...${NC}"
+cd "$INSTALL_DIR" || exit 1
+docker build -t "my_wrapper_tool:latest" .
 if [ $? -ne 0 ]; then
     echo -e "${RED}[ERROR] Docker build failed.${NC}"
     exit 1
 fi
-echo -e "${GREEN}      Docker image built successfully.${NC}"
 
-# 3. Setup Config Directory
-echo -e "${BLUE}[2/4] Setting up Configuration at $CONFIG_DIR...${NC}"
+# 4. Setup Config & Docker Compose
+echo -e "${BLUE}[4/5] Configuring launcher...${NC}"
 mkdir -p "$CONFIG_DIR"
-cp docker-compose.yml "$CONFIG_DIR/"
-echo -e "${GREEN}      Config files copied.${NC}"
 
-# 4. Install Shell Integration
-echo -e "${BLUE}[3/4] Configuring Shell Alias...${NC}"
+# 5. Inject the robust Alias
+echo -e "${BLUE}[5/5] Updating Shell Configuration...${NC}"
 
-# Define the function we want to inject
-# We use a unique marker (# SIMKER_START) to ensure we don't duplicate it if installed twice
 SHELL_FUNC="
 # --- SIMKER START ---
 simker() {
-    local current_dir=\$(pwd)
-    PROJECT_DIR=\"\$current_dir\" docker-compose -f $CONFIG_DIR/docker-compose.yml run --rm $IMAGE_NAME \"\$@\"
+    # We point strictly to the installed location's docker-compose file
+    # But we map the CURRENT directory (\$(pwd)) as the workspace
+    PROJECT_DIR=\"\$(pwd)\" docker-compose \
+        -f \"$INSTALL_DIR/docker-compose.yml\" \
+        --project-directory \"$INSTALL_DIR\" \
+        run --rm $APP_NAME \"\$@\"
 }
 # --- SIMKER END ---
 "
 
 # Detect Shell
-TARGET_RC=""
-if [ -n "$ZSH_VERSION" ]; then
-    TARGET_RC="$HOME/.zshrc"
-elif [ -n "$BASH_VERSION" ]; then
-    TARGET_RC="$HOME/.bashrc"
-else
-    # Fallback usually to bashrc
-    TARGET_RC="$HOME/.bashrc"
-fi
+TARGET_RC="$HOME/.bashrc"
+[ -n "$ZSH_VERSION" ] && TARGET_RC="$HOME/.zshrc"
 
-# Append only if not already present
-if grep -q "SIMKER START" "$TARGET_RC"; then
-    echo -e "${GREEN}      Alias already exists in $TARGET_RC. Skipping.${NC}"
-else
+# Remove old function if exists (simple grep check)
+# Ideally, you'd use sed to remove the old block, but for now appending is safer
+# unless you want to get fancy with sed.
+if ! grep -q "SIMKER START" "$TARGET_RC"; then
     echo "$SHELL_FUNC" >> "$TARGET_RC"
-    echo -e "${GREEN}      Alias added to $TARGET_RC.${NC}"
+    echo -e "${GREEN}      Shell alias installed.${NC}"
+else
+    echo -e "${BLUE}      Shell alias already exists. Please restart terminal to apply updates.${NC}"
+    echo -e "${BLUE}      If you were reinstalling the tool, please delete it before to enable path updates.${NC}"
 fi
 
 echo -e "${BLUE}=== Installation Complete! ===${NC}"
-echo -e "Please run: ${GREEN}source $TARGET_RC${NC} to start using the tool."
-echo -e "If the fonts seem undefined / strange, install FiraCode Nerd font, and set is as default to your terminal."
+echo -e "The tool is installed in: ${GREEN}$INSTALL_DIR${NC}"
+echo -e "Please run: ${GREEN}source $TARGET_RC${NC}"
