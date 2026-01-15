@@ -45,40 +45,31 @@ And some custom utilities to link theses tools :
 
 ## Getting Started 🚀 :
 
-1. Build the Image
+1. Install the tool
 
-Clone this repository and build the Docker image:
-
-```sh
-make setup
-```
-
-or (actually the makefile execute theses instructions)
+There's an helper script to setup it for you !
 
 ```sh
-docker build -t simker .
-xhost +local:docker
+./installer/install.sh
 ```
+
+This will install the container globally, and you won't need to 
+manually retain the path.
+The code is installed in ~/.local/share/simker/ and built from it.
+
+Thus, you can delete this folder, the tool will be retained. 
 
 2. Run the Container
 
-To run the container and access the terminal:
+To run the container and access the terminal,
+you can type in any location : 
 
 ```sh
-make run
+simker
 ```
 
-or
-
-```sh
-docker run -it --rm \
-           -v $(pwd):/project \
-           -w /project \
-           --net=host \
-           -e DISPLAY=$DISPLAY \
-           -v /tmp/.X11-unix:/tmp/.X11-unix \
-           simker
-```
+The tool will mount your actual location into the /workspace of the tool.
+Just go into your project directoty, launch the container and let's develop !
 
 ## Usage & Help System 📖
 
