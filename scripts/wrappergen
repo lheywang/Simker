@@ -870,7 +870,7 @@ def print_ports(inputs: list[Path], outputs: list[Path]) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.formatter_class = argparse.RichHelpFormatter
+    parser.formatter_class = argparse.HelpFormatter
     parser.add_argument(
         "files",
         nargs="+",
