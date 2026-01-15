@@ -53,6 +53,13 @@ There's an helper script to setup it for you !
 ./installer/install.sh
 ```
 
+> [!NOTE]
+> You must be member of the group "docker" to be able to build the container correctly.
+
+> [!WARNING]
+> Never run this script as admin. Otherwise, you'll modify the root's .bashrc script, not yours.
+> The tool won't be available for you.
+
 This will install the container globally, and you won't need to 
 manually retain the path.
 The code is installed in ~/.local/share/simker/ and built from it.
