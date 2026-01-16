@@ -1,20 +1,25 @@
 # **Simker**
 
 Simker is a specialized Docker container tailored for electronic mixed-signal simulation.
-It aggregates the best open-source tools for analog and digital design into a single,
-portable environment, allowing you to create "electronics for tomorrow" without the
-hassle of dependency management.
+It aggregates open-source tools for analog and digital design into a single,
+portable environment, without the hassle of dependency management.
 
---- 
+---
 
-This project started as I was tired of using the university's tools which are heavy, 
-require a remote desktop connection and are WAYYY too costly for a student economy.
+This project started as I was tired of using the university's tools which are heavy,
+require a remote desktop connection and are WAYYY too costly for a student budget.
 So, I looked for open-source alternatives for a student, and, well, didn't find anything really
 convincing.
+
 - Qucs-s ? I like it, but can't run mixed-signals simulations.
 - QSPICE ? I also like it, but, only available under Windows.
 
-So, I started this project as a personnal tool, a very simple docker that did just grown a... bit too much. And since I though it was cool to share it, here we are !
+So, I started this project as a personnal tool, a very simple docker that did just grown a... bit too much.
+And since I though it was cool to share it, here we are !
+
+And since we're here, don't forget that this tool collection has been verified individually, so there shall not be bugs.
+I can't ensure you there won't be, I don't have any ways to make it (time nor money).
+Really fine for personnal projects, as I do, but, you can't thrust them as you may thrust industry standard tools.
 
 ## Key Features⚡:
 
@@ -31,17 +36,17 @@ So, I started this project as a personnal tool, a very simple docker that did ju
 
 ## Included Toolbox 🛠:
 
-Simker comes pre-packaged with industry-standard open-source EDA tools:
+Simker comes with industry-standard open-source EDA tools:
 
 | Category              | Tool       | Description                                                                 |
 | --------------------- | ---------- | --------------------------------------------------------------------------- |
 | SPICE Simulation      | NGSPICE    | The standard for open-source analog circuit simulation.                     |
-| VHDL Simulation       | GHDL       | Fast VHDL simulator (GCC/LLVM backend).                                     |
+| VHDL Simulation       | GHDL       | Fast VHDL simulator (GCC backend).                                          |
 | Verilog/SystemVerilog | Verilator  | The fastest Verilog/SystemVerilog simulator.                                |
 | Verilog-A             | OpenVAF-R  | Verilog-A compiler for compact model / custom analog functions integration. |
 | Schematic Capture     | XSchem     | Hierarchical schematic capture for VLSI/mixed-signal.                       |
-| Digital Viewer        | GTKWave    | Fully featured wave viewer for Unix and Win32.                              |
-| Analog Viewer         | GAW        | Gtk Analog Wave viewer for displaying SPICE data.                           |
+| Digital Viewer        | GTKWave    | Fully featured wave viewer.                                                 |
+| Analog Viewer         | GAW        | Gtk Analog Wave viewer for displaying signals.                              |
 | Terminal              | oh-my-posh | A better terminal than the default one in docker                            |
 
 And some custom utilities to link theses tools :
@@ -61,6 +66,11 @@ And some custom utilities to link theses tools :
 There's an helper script to setup it for you !
 
 ```sh
+# If not already done, add yourself to the docker group (prevent for running docker as sudo)
+sudo groupadd docker
+sudo usermod -aG docker $USER
+
+# Run the installer script
 ./installer/install.sh
 ```
 
@@ -68,19 +78,20 @@ There's an helper script to setup it for you !
 > You must be member of the group "docker" to be able to build the container correctly.
 
 > [!WARNING]
-> Never run this script as admin. Otherwise, you'll modify the root's .bashrc script, not yours.
+> Never run this script as sudo. Otherwise, you'll modify the root's .bashrc script, not yours.
 > The tool won't be available for you.
+> This shouldn't not broke your system anyway, that's just... useless.
 
-This will install the container globally, and you won't need to 
+This will install the container globally, and you won't need to
 manually retain the path.
 The code is installed in ~/.local/share/simker/ and built from it.
 
-Thus, you can delete this folder, the tool will be retained. 
+Thus, you can delete this folder, the tool will be retained.
 
 2. Run the Container
 
 To run the container and access the terminal,
-you can type in any location : 
+you can type in any location :
 
 ```sh
 simker
@@ -89,18 +100,19 @@ simker
 The tool will mount your actual location into the /workspace of the tool.
 Just go into your project directoty, launch the container and let's develop !
 
-## Usage & Help System 📖
+## Usage & Help System 📖 : 
 
-Simker was designed to be the easiest to use and setup, even for beginner !
+Simker was designed to be the easiest to use and setup, even for beginners !
 
-Once inside the container, you are greeted by the Simker shell. We have included a robust help system to get you started immediately.
+Once inside the container, you are greeted by the Simker shell (a stabdard bash behind). 
+I have included a help system to get you started immediately.
+
 The Simker CLI
-
 Just type simker at any time to see the welcome screen and status:
 
 ```
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%             ███████╗██╗███╗   ███╗██╗  ██╗███████╗██████╗     ██╗           %            
+%             ███████╗██╗███╗   ███╗██╗  ██╗███████╗██████╗     ██╗           %
 %             ██╔════╝██║████╗ ████║██║ ██╔╝██╔════╝██╔══██╗    ██║           %
 %             ███████╗██║██╔████╔██║█████╔╝ █████╗  ██████╔╝    ██║           %
 %             ╚════██║██║██║╚██╔╝██║██╔═██╗ ██╔══╝  ██╔══██╗    ╚═╝           %
@@ -139,7 +151,7 @@ Just type simker at any time to see the welcome screen and status:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ```
 
-### Tool Specific Help
+### Tool Specific Help : 
 
 Don't remember the flags for ghdl or ngspice? I've wrapped the help commands for you,
 with a nice link to the official help page, which will be more than complete !
@@ -169,8 +181,10 @@ Check Versions: Type
 ```sh
 simker_help versions
 ```
+
 > [!NOTE]
 > For the even more nerd users, there's also man pages for the different tools (built by the developper, or custom ones).
+> Theses are disabled by default (minized system), but still copied when building the image.
 
 ## Workflow Example 🧩 :
 
@@ -179,20 +193,41 @@ But, anyway, it can be used for pure analog or pure digital design without any m
 
 The steps are :
 
-- Write and test each block separately (digital, analog...). You can count on helper scripts here to help you !
-- Assemble theses blocks in the global simulation without XSCHEM.
-- Launch NGSPICE and wait !
-- See the results, and iterate if needed.
+1. Write and test each block separately (digital, analog...). Simulate using the native tool, and if needed, generate a XSCHEM schematic using **wrappergen**
+2. Assemble theses blocks in the global simulation with XSCHEM.
+3. Launch NGSPICE and wait !
+4. See the results, and iterate if needed.
 
-## Author & License 📝
+## Known limitations : 
+
+### Digital simulation : 
+
+As NGSPICE vlnggen, for which the tools depends, there can only be a single digital d_cosim block.
+That's a limitation that could be bypassed by combining all theses blocks in a single top (which is easy using wrappergen).
+That's not proper to the docker itself, but I wasn't really excited to change these tools behavior.
+
+## Author & License 📝 : 
 
 Leonard HEYWANG
+
 - leonard.heywang@proton.me
 
 Project initiated: 03/01/2026
 
 Distributed under the GNU GPL 3.0 License. See LICENSE for more information.
 
-
 > [!WARNING]
 > If you encounter "Error: cannot open display", please ensure your X11 forwarding is configured correctly on your host machine.
+
+## Contributing and support : 
+
+As a you may have seen, I'm still a student, so, this project is developped as a side project. This mean there may be period of
+inactivity. Even if I tried as hard as I could, don't expect patches to be available within professional delays.
+
+If you think, you may be contributing to it, I'm open to any form of help.
+
+For any help request, you may contact me by email, or, via the platform you discovered this tool, if I was the OP.
+
+I don't have any form of paypal / financial support, as I don't want it. The greatest form of support may be starring this on github !
+
+Thanks by advance !
