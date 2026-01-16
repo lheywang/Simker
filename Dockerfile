@@ -344,7 +344,7 @@ RUN apt-get update && apt-get install -y --fix-missing \
     libxrender1 \
     libxft2
 
-# Set default to DISPLAY
+# Set default to DISPLAY (will be changed when creating the docker with the host variable)
 ENV DISPLAY=:0
 
 # ===============================================================================================
@@ -426,8 +426,8 @@ RUN chmod -R 777 /workspace
 RUN rm -rf /var/lib/apt/lists/*
 
 # ===============================================================================================
-# Set docker entrypoint and active user 
-# ================================================================================================
+# Set docker active user 
+# ===============================================================================================
 # Setting up user
 USER ubuntu
 WORKDIR /workspace
@@ -435,6 +435,12 @@ WORKDIR /workspace
 # Install oh-my-posh config (This must be done as user, to, here we don't have others choices)
 RUN curl -s https://ohmyposh.dev/install.sh | bash -s
 RUN echo 'eval $(oh-my-posh init bash --config atomic)' >> $HOME/.bashrc
+
+# ===============================================================================================
+# Set docker entrypoint 
+# ===============================================================================================
+# And, here a small useless command to trigger a rebuild: 
+RUN echo "Hello World from Dockerfile !"
 
 # Setting CMD / ENTRYPOINT
 ENTRYPOINT ["/bin/sh"]
