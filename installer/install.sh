@@ -17,18 +17,18 @@ echo -e "${BLUE}=== Installing $APP_NAME System-Wide ===${NC}"
 
 # 1. Clean previous installs
 if [ -d "$INSTALL_DIR" ]; then
-    echo -e "${BLUE}[1/5] Removing old installation...${NC}"
+    echo -e "${BLUE}[1/6] Removing old installation...${NC}"
     rm -rf "$INSTALL_DIR"
 fi
 
 # 2. Copy Source Code to Safe Location
-echo -e "${BLUE}[2/5] Installing source code to $INSTALL_DIR...${NC}"
+echo -e "${BLUE}[2/6] Installing source code to $INSTALL_DIR...${NC}"
 mkdir -p "$INSTALL_DIR"
 rsync -av --progress . "$INSTALL_DIR" --exclude .git --exclude .vscode --exclude tmp
 echo -e "${GREEN}      Source code installed.${NC}"
 
 # 3. Build Docker Image (FROM the safe location)
-echo -e "${BLUE}[3/5] Building Docker Image...${NC}"
+echo -e "${BLUE}[3/6] Building Docker Image...${NC}"
 cd "$INSTALL_DIR" || exit 1
 docker build -t "$APP_NAME" .
 if [ $? -ne 0 ]; then
@@ -37,11 +37,11 @@ if [ $? -ne 0 ]; then
 fi
 
 # 4. Setup Config & Docker Compose
-echo -e "${BLUE}[4/5] Configuring launcher...${NC}"
+echo -e "${BLUE}[4/6] Configuring launcher...${NC}"
 mkdir -p "$CONFIG_DIR"
 
 # 5. Inject the robust Alias
-echo -e "${BLUE}[5/5] Updating Shell Configuration...${NC}"
+echo -e "${BLUE}[5/6] Updating Shell Configuration...${NC}"
 
 SHELL_FUNC="
 # --- SIMKER START ---
@@ -71,6 +71,10 @@ else
     echo -e "${BLUE}      Shell alias already exists. Please restart terminal to apply updates.${NC}"
     echo -e "${BLUE}      If you were reinstalling the tool, please delete it before to enable path updates.${NC}"
 fi
+
+# 5. Configure display options
+echo -e "${BLUE}[6/6] Configuring display elements ...${NC}"
+xhost +local:docker
 
 echo -e "${BLUE}=== Installation Complete! ===${NC}"
 echo -e "The tool is installed in: ${GREEN}$INSTALL_DIR${NC}"
