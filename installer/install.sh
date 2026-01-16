@@ -45,7 +45,7 @@ echo -e "${BLUE}[5/5] Updating Shell Configuration...${NC}"
 
 SHELL_FUNC="
 # --- SIMKER START ---
-simker() {
+function simker() {
     local current_work_dir=\"\$(pwd)\"
 
     #    PROJECT_DIR=... tells Docker what volume to mount
