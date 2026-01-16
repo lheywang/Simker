@@ -88,46 +88,13 @@ footprint=1206
 device="ceramic capacitor"}
 C {devices/gnd.sym} 400 230 0 0 {name=l6 lab=GND}
 C {top.sym} 10 0 0 0 {}
-C {driver.sym} 230 -170 0 0 {v \{xschem version=3.4.4 file_version=1.2\}
-K \{\}
-V \{\}
-S \{\}
-E \{\}
-
-L 4 -40.0 20.0 -40.0 -20.0 \{\}
-L 4 -40.0 -20.0 40.0 -20.0 \{\}
-L 4 40.0 -20.0 40.0 20.0 \{\}
-L 4 40.0 20.0 -40.0 20.0 \{\}
-
-B 5 -42.5 -12.5 -37.5 -7.5 \{name=driver_in dir=in seq=0\}
-T \{driver_in\} -35.0 -14.0 0 0.1 0.1 \{\}
-B 5 37.5 -12.5 42.5 -7.5 \{name=driver_out dir=out seq=1\}
-T \{driver_out\} 7.5 -14.0 0 0.1 0.1 \{\}
-
-T \{driver\} -16.5 -16.5 0 0 0.2 0.2
-
-G \{type=subcircuit 
-format="@name @pinlist @model"
-template="name=X1 model=driver"
-spice_sym_def="
-.control
-  pre_osdi driver.osdi
-.endc
-
-.subckt driver driver_in driver_out
-  .Model driver_model driver
-  N1 driver_in driver_out driver_model
-.ends
-"
-\}
-
-}
-C {driver.sym} 230 -60 0 0 {}
-C {driver.sym} 230 50 0 0 {}
-C {driver.sym} 230 160 0 0 {}
 C {devices/code.sym} -360 -210 0 0 {name=s1 only_toplevel=false value="
 .control 
   tran 10n 15u
   plot v(net2) v(net4)+24 v(net6)+18 v(net8)+12 v(net9)+6 v(net1)-6
 .endc
 "}
+C {driver.sym} 230 -170 0 0 {name=X1}
+C {driver.sym} 230 -60 0 0 {name=X2}
+C {driver.sym} 230 50 0 0 {name=X3}
+C {driver.sym} 230 160 0 0 {name=X4}

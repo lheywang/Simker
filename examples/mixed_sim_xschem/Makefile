@@ -17,3 +17,6 @@ clean:
 	rm -rf *.txt *.spice
 
 prepare: top.so driver.osdi circuit.sch
+	mkdir -p simulation
+	cp top.so simulation/top.so
+	cp driver.osdi simulation/driver.osdi
