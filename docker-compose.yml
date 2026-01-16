@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ${PROJECT_DIR:-./}:/workspace
+      - ${PROJECT_DIR:-./}:/workspace:z
       - /tmp/.X11-unix:/tmp/.X11-unix
     environment:
       - DISPLAY=${DISPLAY}
