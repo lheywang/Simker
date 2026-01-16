@@ -391,7 +391,6 @@ RUN python3 setup.py install
 # ===============================================================================================
 # Creating folders : 
 RUN mkdir -p /tools/scripts
-RUN mkdir -p /tools/lib
 RUN mkdir -p /tools/doc
 RUN mkdir -p /workspace
 RUN mkdir -p /examples
@@ -402,9 +401,6 @@ ADD ./doc /tools/doc
 
 # Import examples
 ADD ./examples /examples
-
-# Import ngspice libs
-ADD ./lib /tools/lib
 
 # Copy binaries (last step, to let all the previous step run while building the first image)
 COPY --from=build /tools /tools
@@ -420,7 +416,7 @@ RUN /tools/scripts/getversions
 # ===============================================================================================
 # Enable the user the folders where it need : 
 RUN chmod -R 755 /tools
-RUN chmod -R 755 /examples
+RUN chmod -R 777 /examples
 RUN chmod -R 777 /workspace
 
 # ===============================================================================================
