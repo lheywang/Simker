@@ -5,10 +5,15 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ${PROJECT_DIR:-./}:/workspace:z
-      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /tmp/.X11-unix:/tmp/.X11-unix:z
+      - ${XAUTHORITY:-$HOME/.Xauthority}:/tmp/.docker.xauth:z
     environment:
       - DISPLAY=${DISPLAY}
       - TZ=Europe/Paris
       - TERM=xterm-256color
+      - XAUTHORITY=/tmp/.docker.xauth
     working_dir: /workspace
     user: ubuntu
+    network_mode: host
+    security_opt:
+      - label=disable
