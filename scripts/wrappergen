@@ -222,7 +222,7 @@ def match_ports(
 
     def get_wires(
         ports_in: list[dataport], ports_out: list[dataport], matched: list[str]
-    ) -> list[dataport]:
+    ) -> tuple[list[dataport], list[str]]:
         t_wires = []
 
         # That's not really nice in terms of performance O(n2), but as they're top modules, we don't expect very long lists, the delta is acceptable.
@@ -535,7 +535,7 @@ def generate_digital_spice_string(
   .model a2d adc_bridge(in_low={low_th} in_high={high_th})
   .model d2a dac_bridge(out_low=0.0 out_high={voltage})
 
-  .model {model_name} d_cosim simulation={str(include.relative_to(sym.parent))}
+  .model {model_name} d_cosim simulation=\"{str(include)}\"
   {adcs}
   {dacs}
 
@@ -636,19 +636,19 @@ def generate_sym(
         # Append the basic elements of the file :
         f.write("v {xschem version=3.4.4 file_version=1.2}\n")
 
-        # Append model parameters : 
+        # Append model parameters :
         f.write(f"G {"{"}type=subcircuit \n")
-        f.write('format="@name @pinlist @symname"\n')
-        f.write(f'template="name=X"\n')
-        f.write(f'spice_sym_def=".include \"{str(target.with_suffix(".spice"))}\""\n')
+        f.write("format=\"@name @pinlist @symname\"\n")
+        f.write(f"template=\"name=X{str(target.name).split(".")[0]}1\"\n")
+        f.write(f"spice_sym_def=\".include {str(target.with_suffix(".spice"))}\"\n")
         f.write("}\n")
         f.write("V {}\n")
         f.write("S {}\n")
         f.write("E {}\n")
 
-        # Then, draw the global boundaries and pins : 
+        # Then, draw the global boundaries and pins :
         def get_dimension(size: int) -> int:
-            return ((size - 1) * PITCH) + (2 * OFFSET)
+            return int(((size - 1) * PITCH) + (2 * OFFSET))
 
         # Then, call the functions and determine the size matrix (with a minimum to 40 to ensure a visible symbol)
         height = max(
@@ -657,10 +657,10 @@ def generate_sym(
         width = MIN_Y
 
         # Define some extrems :
-        x_left = -(width / 2)
-        x_right = width / 2
-        y_top = -(height / 2)
-        y_bot = height / 2
+        x_left = int(-(width / 2))
+        x_right = int(width / 2)
+        y_top = int(-(height / 2))
+        y_bot = int(height / 2)
 
         coordinates = [
             [x_left, y_bot, x_left, y_top],
@@ -676,9 +676,7 @@ def generate_sym(
             )
 
         # Then, create the coordinates for the pins :
-        def get_pins_position(
-            orig: int, fixed: int, number: int
-        ) -> list[list[int, int]]:
+        def get_pins_position(orig: int, fixed: int, number: int) -> list[list[int]]:
             pins = []
             act_pos = orig + OFFSET
 
@@ -693,7 +691,7 @@ def generate_sym(
 
         # Then, place the pins on the file :
         def place_pins(
-            pins: list[list[int, int]],
+            pins: list[list[int]],
             pin_name: list[str],
             direction: str,
             pins_cnt,
@@ -747,7 +745,7 @@ def generate_sym(
             f"T {"{"}{name}{"}"} {0 - (TEXT_CHAR_SIZE * len(name))} {0 - (TEXT_CHAR_SIZE * len(name))} 0 0 0.2 0.2 {"{}"}\n"
         )
 
-    # Before exit, generate the spice string and write it to a file : 
+    # Before exit, generate the spice string and write it to a file :
     spice_string = ""
     if analog == True:
         spice_string = generate_analog_spice_string(
@@ -851,7 +849,7 @@ def generate_so(top: Path, sources: list[Path]) -> None:
     return
 
 
-def print_ports(inputs: list[Path], outputs: list[Path]) -> None:
+def print_ports(inputs: list[dataport], outputs: list[dataport]) -> None:
     """
     This small function print the listed ports on a better way. Always nice as user info !
     """
@@ -991,7 +989,7 @@ if __name__ == "__main__":
     extracted = [Path(tmp / t.name).with_suffix(".json") for t in sources]
     top = Path(args.name).resolve()
     sym = top.with_suffix(".sym")
-    modName = None
+    modName = ""
 
     binary = (
         top.with_suffix(".tmp")
