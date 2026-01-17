@@ -94,7 +94,7 @@ C {devices/code.sym} -360 -210 0 0 {name=s1 only_toplevel=false value="
   plot v(net2) v(net4)+24 v(net6)+18 v(net8)+12 v(net9)+6 v(net1)-6
 .endc
 "}
-C {driver.sym} 230 -170 0 0 {name=X1}
-C {driver.sym} 230 -60 0 0 {name=X2}
-C {driver.sym} 230 50 0 0 {name=X3}
-C {driver.sym} 230 160 0 0 {name=X4}
+C {driver.sym} 230 -170 0 0 {name=Xdriver1}
+C {driver.sym} 230 -60 0 0 {name=Xdriver2}
+C {driver.sym} 230 50 0 0 {name=Xdriver3}
+C {driver.sym} 230 160 0 0 {name=Xdriver4}
