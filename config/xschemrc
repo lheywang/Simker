@@ -1,5 +1,16 @@
-# This is a default config file, you may change it as your needs !
+# ==============================================================
+# file : xschemrc
+# 
+# author : l.heywang <leonard.heywang@proton.me>
+# date : 16/01/2026
+# 
+# ==============================================================
 
+# Configure default options
 set XSCHEM_LIBRARY_PATH {}
 append XSCHEM_LIBRARY_PATH :${XSCHEM_SHAREDIR}/xschem_library
 append XSCHEM_LIBRARY_PATH :[pwd]
+
+# Set GUI options
+set local_netlist_dir 1
+set netlist_show 1
