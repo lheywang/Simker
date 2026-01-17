@@ -98,8 +98,14 @@ def va2v(input: Path, output: Path) -> str:
         data = f.read().strip().replace("\n", "#")
 
     # Split to known keywords that are mandatory :
-    corps = data.split("analog begin")[1].replace("#", "\n")
-    data = data.split("module")[1].split("analog begin")[0].strip()
+    decl = data.split("electrical")[-1]
+    tmp = [(t + ";").replace("#", "\n") for t in decl.split(";")[1:]]
+    corps = ""
+    for t in tmp:
+        corps = corps + t
+
+    # Extract ports
+    data = data.split("module")[1].split("electrical")[0].strip()
 
     # Restore newlines
     data = data.replace("#", "\n").split("\n")
@@ -408,9 +414,7 @@ def generate_module(
                 f.write(f"    electrical {output.name.split("#")[-1]};\n")
             f.write("\n")
 
-            # Append analog corpse (copied from source file)
-            f.write("    analog begin\n")
-
+            # Append source, which now contain the analog begin block : 
             analog_decl = analog_decl[1:] if analog_decl[0] == "\n" else analog_decl
             f.write(analog_decl)
 
