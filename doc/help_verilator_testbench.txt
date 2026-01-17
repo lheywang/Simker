@@ -1,0 +1,63 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    ██╗  ██╗███████╗██╗     ██████╗     ██╗                  %                   
+%                    ██║  ██║██╔════╝██║     ██╔══██╗    ██║                  %
+%                    ███████║█████╗  ██║     ██████╔╝    ██║                  %
+%                    ██╔══██║██╔══╝  ██║     ██╔═══╝     ╚═╝                  %
+%                    ██║  ██║███████╗███████╗██║         ██╗                  %
+%                    ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝         ╚═╝                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% HELP PAGE : VERILATOR TESTBENCH CLASS                                       %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+% This header provides a C++ abstraction layer over the Verilator interface.  %
+% It simplifies signal driving, clock generation, VCD tracing, and assertion  %
+% reporting with colored console output.                                      %
+%                                                                             %
+% 1. BASIC SETUP                                                              %
+%    Include your verilated module header and this library.                   %
+%                                                                             %
+%    Testbench<Vmodule> tb("Module_Name");                                    %
+%                                                                             %
+%    > Automatically opens a .vcd file named "Module_Name.vcd".               %
+%    > Initializes the DUT and tracing.                                       %
+%                                                                             %
+% 2. SIMULATION COMMANDS                                                      %
+%    tb.tick();        // Advance time by 1 full clock cycle (2 edges).       %
+%    tb.stick();       // Advance time by 1 edge (half cycle).                %
+%    tb.reset();       // Toggles rst_n low -> high over 2 cycles.            %
+%    tb.clear();       // Toggles clear high -> low over 2 cycles.            %
+%                                                                             %
+% 3. FLOW CONTROL                                                             %
+%    tb.run_for(N);                 // Run for N cycles.                      %
+%    tb.run_until(&tb.dut->sig, 1); // Run until signal == 1.                 %
+%    tb.run_while(&tb.dut->sig, 1); // Run while signal == 1.                 %
+%                                                                             %
+% 4. ASSERTIONS & REPORTING                                                   %
+%    tb.check_equality(got, expected, "TestName");                            %
+%                                                                             %
+%    > Prints [PASS] in Green or [FAIL] in Red with hex values.               %
+%    > Updates internal pass/fail counters.                                   %
+%                                                                             %
+%    tb.set_info("Msg");   // Print INFO message (Blue).                      %
+%    tb.set_warn("Msg");   // Print WARN message (Yellow).                    %
+%    tb.set_error("Msg");  // Print ERROR message (Red).                      %
+%                                                                             %
+% 5. EXAMPLE SKELETON                                                         %
+%                                                                             %
+%    int main(int argc, char **argv) {                                        %
+%        Verilated::commandArgs(argc, argv);                                  %
+%        Testbench<Vcounter> tb("Counter");                                   %
+%                                                                             %
+%        tb.reset();                                                          %
+%                                                                             %
+%        for(int i=0; i<10; i++) {                                            %
+%            tb.tick();                                                       %
+%            tb.check_equality(tb.dut->cnt, i, "Count Check");                %
+%        }                                                                    %
+%                                                                             %
+%        return tb.get_return(); // Returns -1 if any test failed.            %
+%    }                                                                        %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

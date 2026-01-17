@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%             ███████╗██╗███╗   ███╗██╗  ██╗███████╗██████╗     ██╗           %            
+%             ███████╗██╗███╗   ███╗██╗  ██╗███████╗██████╗     ██╗           %
 %             ██╔════╝██║████╗ ████║██║ ██╔╝██╔════╝██╔══██╗    ██║           %
 %             ███████╗██║██╔████╔██║█████╔╝ █████╗  ██████╔╝    ██║           %
 %             ╚════██║██║██║╚██╔╝██║██╔═██╗ ██╔══╝  ██╔══██╗    ╚═╝           %
@@ -22,9 +22,13 @@
 % But that's not all ! There's also some usefull scripts, also included !     %
 %  - vhdl2verilog :                          Convert a VHDL file into a       %
 %                                              verilog one !                  %
-%  - wrappergen :                            Wrap Verilog / VerilogA files    %
-%                                              into a single entity and       %
-%                                              symbol for XSCHEM / NGSPICE !  %
+%  - wrappergen :                            Build XSCHEM sybmols from        %
+%                                              verilog(a) sources !           %
+%                                                                             %
+% And, some helper files to build more advanced tests :                       %
+%  - testbench.h                             Create a verilator helper class  %
+%                                              to help during assertions and  %
+%                                              and testbench controls.        %
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                             %
