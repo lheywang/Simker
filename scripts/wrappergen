@@ -97,12 +97,28 @@ def va2v(input: Path, output: Path) -> str:
     with open(input, "r") as f:
         data = f.read().strip().replace("\n", "#")
 
-    # Split to known keywords that are mandatory :
-    decl = data.split("electrical")[-1]
-    tmp = [(t + ";").replace("#", "\n") for t in decl.split(";")[1:]]
-    corps = ""
-    for t in tmp:
-        corps = corps + t
+    # Extract the main declaration of the analog part : 
+    tokens = data.split(";")
+
+    # Define a filter of the keywords we don't want
+    filter = ["input", "output", "module (", "electrical"]
+
+    # Filter all of the tokens, and only get the one who don't match a word in it
+    analogs = [token if not any(word in token for word in filter) else "" for token in tokens]
+
+    # Create a big string to get the whole definition corps : 
+    analog = ""
+    start = True
+    for index, segment in enumerate(analogs):
+        if start:
+            if segment != '':
+                analog = segment
+                start = False
+        else:
+            if segment != '':
+                analog += ";" + segment
+    analog += "#"
+    corps = analog.strip("\n").replace("#", "\n")
 
     # Extract ports
     data = data.split("module")[1].split("electrical")[0].strip()
