@@ -1,0 +1,61 @@
+[*]
+[*] GTKWave Analyzer v4.0.0-prealpha (4ec4e13) (w)1999-2022 BSI
+[*] Sat Jan 17 10:40:19 2026
+[*]
+[dumpfile] "/workspace/wave.vcd"
+[dumpfile_mtime] "Sat Jan 17 10:40:12 2026"
+[dumpfile_size] 1580
+[savefile] "/workspace/wave.gtkw"
+[timestart] 0
+[size] 1920 1043
+[pos] 24 24
+*-24.565441 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] counter_tb.
+[sst_width] 276
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 305
+@200
+-clock and controls
+@28
+counter_tb.uut.clk
+counter_tb.uut.rst_n
+counter_tb.uut.en
+@200
+-
+-output
+@22
+counter_tb.uut.count[3:0]
+@200
+-
+-internals
+@22
+counter_tb.uut.count_reg[3:0]
+[pattern_trace] 1
+[pattern_trace] 0

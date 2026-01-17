@@ -1,0 +1,56 @@
+[*]
+[*] GTKWave Analyzer v4.0.0-prealpha (4ec4e13) (w)1999-2022 BSI
+[*] Sat Jan 17 11:00:27 2026
+[*]
+[dumpfile] "/workspace/Counter_Test.vcd"
+[dumpfile_mtime] "Sat Jan 17 11:00:02 2026"
+[dumpfile_size] 793
+[savefile] "/workspace/wave.gtkw"
+[timestart] 0
+[size] 1920 1043
+[pos] 24 0
+*-2.389946 9 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[sst_width] 276
+[signals_width] 174
+[sst_expanded] 1
+[sst_vpaned_height] 305
+@200
+-clock and controls
+@28
+TOP.counter.clk
+TOP.counter.rst_n
+TOP.counter.en
+@200
+-
+-output
+@22
+TOP.counter.count[3:0]
+[pattern_trace] 1
+[pattern_trace] 0
