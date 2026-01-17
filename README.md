@@ -223,11 +223,14 @@ Any computer that as enough RAM to run a docker and some basic tools will work.
 | Configuration | Hardware specs                                                                              |
 | ------------- | ------------------------------------------------------------------------------------------- |
 | Minimal       | Any cpu built in the last decade and 16 GB of RAM. About 10 GB of free storage is required. |
-| Recommended   | Any CPU with at least 6 cores and 16 GB or RAM. About 15 GB of SSD available                |
-| Ideal         | Any CPU with at least 8 cores and 32 GB of RAM. About 20 GB of NVMe drive available.        |
+| Recommended   | Any CPU with at least 8 cores and 16 GB or RAM. About 15 GB of SSD available                |
+| Ideal         | Any CPU with at least 10 cores and 32 GB of RAM. About 20 GB of NVMe drive available.       |
 
 > [!WARNING]
 > Theses recommendations are built on my own tests. Theses are more for reference rather than real hard limit.
+
+>[!NOTE]
+> The build process will try to use 8 cores (if available). You may see slowdown for computer with less than 8 cores.
 
 ## Software recommendations : 
 
@@ -236,8 +239,8 @@ I tested this tool on fedora 42 and 43, as well as Ubuntu 25.04. Both of them wo
 This is the recommended platform.
 
 ### Windows OS :
-While there's no restrictions about it, I don't tested it. And, since WSL exist, you can just install it and run it from there. Will be easier to maintain
-a single platform (linux) rather than different OSes.
+While there's no restrictions about it, I don't tested it. I tested the tool in fedora 42 and 43 within WSL VM, which is something I highly recommend.
+I don't plan to really develop nor test in plain Windows system.
 
 ### Mac OS : 
 Finally, I don't tested it in any form under macOS. And, I don't planned to test it someday.
