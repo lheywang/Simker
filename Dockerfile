@@ -392,14 +392,14 @@ RUN python3 setup.py install
 # Creating folders : 
 RUN mkdir -p /tools/scripts
 RUN mkdir -p /tools/doc
+RUN mkdir -p /tools/include
 RUN mkdir -p /workspace
 RUN mkdir -p /examples
 
-# Import scripts
+# Import scripts and other files
 COPY ./scripts /tools/scripts
+COPY ./include /tools/include
 COPY ./doc /tools/doc
-
-# Import examples
 COPY ./examples /examples
 
 # Copy binaries (last step, to let all the previous step run while building the first image)
