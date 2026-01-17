@@ -1,0 +1,51 @@
+`include "disciplines.h"
+`include "constants.h"
+
+module speaker(
+        input p, 
+        output n, 
+        output x_mon
+);     
+    electrical p;
+    electrical n;
+    electrical x_mon;
+
+    // --- Parameters ---
+    parameter real Re  = 6.0;      
+    parameter real Le  = 1.0m;     
+    parameter real Bl  = 8.0;      
+    parameter real Mms = 30.0m;    
+    parameter real Cms = 0.5m;     
+    parameter real Rms = 2.0;      
+    parameter real Xmax = 5.0m;    
+    parameter real K_lim = 1000.0; 
+
+    // --- Variables ---   
+    real x_pos;
+    real v_vel;   
+    real i_coil;
+    real back_emf;
+    real f_spring;     
+    real displacement_factor;
+
+    analog begin
+        // --- Physics Calculations ---
+        i_coil = I(p, n);
+        x_pos = Pos(k);
+        v_vel= ddt(x_pos);
+
+        displacement_factor = 1.0 + K_lim * pow(x_pos / Xmax, 4);
+        f_spring = (x_pos / Cms) * displacement_factor;
+
+        F(k) <+ Mms * ddt(v_vel) + Rms * v_vel + f_spring;
+        F(k) <+ -1 * Bl * i_coil; 
+        
+        back_emf = Bl * v_vel;
+        V(p, n) <+ i_coil * Re + ddt(i_coil * Le) + back_emf;
+        
+        // --- Monitor Assignment ---
+        // We force the voltage on pin x_mon to equal the position 'pos'
+        // Result: 5V on this pin = 5mm of cone excursion.
+        V(x_mon) <+ x_pos * 1000; 
+    end
+endmodule
