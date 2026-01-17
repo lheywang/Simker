@@ -28,6 +28,8 @@ module speaker(
     real f_spring;     
     real displacement_factor;
 
+    kinematic k;
+
     analog begin
         // --- Physics Calculations ---
         i_coil = I(p, n);
@@ -47,5 +49,6 @@ module speaker(
         // We force the voltage on pin x_mon to equal the position 'pos'
         // Result: 5V on this pin = 5mm of cone excursion.
         V(x_mon) <+ x_pos * 1000; 
+        
     end
 endmodule
