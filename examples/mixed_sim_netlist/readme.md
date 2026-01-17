@@ -11,4 +11,26 @@ The circuit is by itself quite simple :
 
 That's a clock, followed by a divider (factor 2), and then, a four bit counter. Each output is wired to an RC filter.
 
+## Running it ?
 
+# digital Verilog example
+
+This example show a simple four bit counter, as any other digital simulation.
+The testbench is here wrote in plain verilog.
+
+## Running it ?
+
+Just type 
+
+```sh
+make sim
+```
+
+Rapidly an analog viewer will be openned for you showing the waveforms, in this order :
+
+- RC output, MSB of counter
+- RC output, bit 2
+- RC output, bit 1
+- RC output, LSB of counter
+- Clock
+- Reset
