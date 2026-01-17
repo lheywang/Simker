@@ -396,11 +396,11 @@ RUN mkdir -p /workspace
 RUN mkdir -p /examples
 
 # Import scripts
-ADD ./scripts /tools/scripts
-ADD ./doc /tools/doc
+COPY ./scripts /tools/scripts
+COPY ./doc /tools/doc
 
 # Import examples
-ADD ./examples /examples
+COPY ./examples /examples
 
 # Copy binaries (last step, to let all the previous step run while building the first image)
 COPY --from=build /tools /tools
@@ -414,8 +414,10 @@ RUN /tools/scripts/getversions
 # ===============================================================================================
 # Configure a new user with permissions (will make link between things easier)
 # ===============================================================================================
-# Enable the user the folders where it need : 
+# Block the user to modify the scripts / tools
 RUN chmod -R 755 /tools
+
+# Enable the user the folders where it need : 
 RUN chmod -R 777 /examples
 RUN chmod -R 777 /workspace
 
