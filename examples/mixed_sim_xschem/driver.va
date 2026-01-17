@@ -4,7 +4,6 @@
 module driver(input in, output out);
     electrical in, out;
 
-
     analog begin
 
         V(out) <+ V(in) * 3.3;
