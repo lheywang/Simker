@@ -26,3 +26,8 @@
 # Add the example folders
 !/examples/mixed_sim_netlist/*
 !/examples/mixed_sim_xschem/*
+!/examples/analog_rc/*
+!/examples/analog_speaker/*
+!/examples/digital_systemverilog/*
+!/examples/digital_verilog/*
+!/examples/digital_vhdl/*
