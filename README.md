@@ -57,8 +57,8 @@ And some custom utilities to link theses tools :
 | wrappengen   | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
 
 And finally some ressources to build higher level tests :
-| Rssource | Description |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Rssource                             | Description                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | /tools/include/verilator/testbench.h | A class to provide higher level of abstraction to verilator, and perform testbench controls and assertions ! |
 
 > [!NOTE]
@@ -78,6 +78,8 @@ sudo usermod -aG docker $USER
 # Run the installer script
 ./installer/install.sh
 ```
+
+![](https://github.com/lheywang/Simker/blob/main/images/installer.gif)
 
 > [!WARNING]
 > This install procedure can be quite long, since it's compiling the tools from sources.
