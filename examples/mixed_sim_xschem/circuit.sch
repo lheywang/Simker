@@ -1,8 +1,9 @@
-v {xschem version=3.1.0 file_version=1.2 }
+v {xschem version=3.4.8RC file_version=1.3}
 G {}
 K {}
 V {}
 S {}
+F {}
 E {}
 N -360 -30 -360 20 {lab=rst}
 N -160 -10 -160 20 {lab=clk}
@@ -17,8 +18,8 @@ N 370 -70 400 -70 {lab=out2}
 N 400 -70 400 -60 {lab=out2}
 N 400 0 400 10 {lab=GND}
 N 270 40 310 40 {lab=#net3}
-N 370 40 400 40 {lab=out2}
-N 400 40 400 50 {lab=out2}
+N 370 40 400 40 {lab=out1}
+N 400 40 400 50 {lab=out1}
 N 400 110 400 120 {lab=GND}
 N 370 150 400 150 {lab=out1}
 N 400 150 400 160 {lab=out1}
@@ -43,13 +44,13 @@ lab=out3}
 N 400 -70 440 -70 {
 lab=out2}
 N 400 40 440 40 {
-lab=out2}
+lab=out1}
 N 400 150 440 150 {
 lab=out1}
 N 440 150 480 150 {
 lab=out1}
 N 440 40 480 40 {
-lab=out2}
+lab=out1}
 N 440 -70 480 -70 {
 lab=out2}
 N 440 -180 480 -180 {
@@ -121,5 +122,5 @@ C {devices/lab_wire.sym} 90 10 0 0 {name=l11 sig_type=std_logic lab=dout1}
 C {devices/lab_wire.sym} 90 30 0 0 {name=l12 sig_type=std_logic lab=dout0}
 C {devices/lab_wire.sym} 480 -180 0 0 {name=l13 sig_type=std_logic lab=out3}
 C {devices/lab_wire.sym} 480 -70 0 0 {name=l14 sig_type=std_logic lab=out2}
-C {devices/lab_wire.sym} 480 40 0 0 {name=l15 sig_type=std_logic lab=out2}
-C {devices/lab_wire.sym} 480 150 0 0 {name=l16 sig_type=std_logic lab=out1}
+C {devices/lab_wire.sym} 480 40 0 0 {name=l15 sig_type=std_logic lab=out1}
+C {devices/lab_wire.sym} 480 150 0 0 {name=l16 sig_type=std_logic lab=out0}
