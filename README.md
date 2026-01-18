@@ -38,27 +38,27 @@ Really fine for personnal projects, as I do, but, you can't thrust them as you m
 
 Simker comes with industry-standard open-source EDA tools:
 
-| Category              | Tool       | Description                                                                 |
-| --------------------- | ---------- | --------------------------------------------------------------------------- |
-| SPICE Simulation      | [NGSPICE](https://ngspice.sourceforge.io/)    | The standard for open-source analog circuit simulation.                     |
-| VHDL Simulation       | [GHDL](https://github.com/ghdl/ghdl)       | Fast VHDL simulator (GCC backend).                                          |
-| Verilog/SystemVerilog | [Verilator](https://github.com/verilator/verilator)  | The fastest Verilog/SystemVerilog simulator.                                |
+| Category              | Tool                                                      | Description                                                                 |
+| --------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------- |
+| SPICE Simulation      | [NGSPICE](https://ngspice.sourceforge.io/)                | The standard for open-source analog circuit simulation.                     |
+| VHDL Simulation       | [GHDL](https://github.com/ghdl/ghdl)                      | Fast VHDL simulator (GCC backend).                                          |
+| Verilog/SystemVerilog | [Verilator](https://github.com/verilator/verilator)       | The fastest Verilog/SystemVerilog simulator.                                |
 | Verilog-A             | [OpenVAF-R](https://github.com/OpenVAF/OpenVAF-Reloaded)  | Verilog-A compiler for compact model / custom analog functions integration. |
-| Schematic Capture     | [XSCHEM](https://xschem.sourceforge.io/stefan/index.html)     | Hierarchical schematic capture for VLSI/mixed-signal.                       |
-| Digital Viewer        | [GTKWave](https://gtkwave.sourceforge.net/)    | Fully featured wave viewer.                                                 |
-| Analog Viewer         | [GAW](https://github.com/StefanSchippers/xschem-gaw)        | Gtk Analog Wave viewer for displaying signals.                              |
-| Terminal              | [oh-my-posh](https://ohmyposh.dev/) | A better terminal than the default one in docker                            |
+| Schematic Capture     | [XSCHEM](https://xschem.sourceforge.io/stefan/index.html) | Hierarchical schematic capture for VLSI/mixed-signal.                       |
+| Digital Viewer        | [GTKWave](https://gtkwave.sourceforge.net/)               | Fully featured wave viewer.                                                 |
+| Analog Viewer         | [GAW](https://github.com/StefanSchippers/xschem-gaw)      | Gtk Analog Wave viewer for displaying signals.                              |
+| Terminal              | [oh-my-posh](https://ohmyposh.dev/)                       | A better terminal than the default one in docker                            |
 
 And some custom utilities to link theses tools :
 
-| Tool         | Description                                                                                                       |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Tool                                                                              | Description                                                                                                       |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | [vhdl2verilog](https://github.com/lheywang/Simker/blob/main/scripts/vhdl2verilog) | A script to convert VHDL files into Verilog. Based on the GHDL synth features !                                   |
-| [wrappengen](https://github.com/lheywang/Simker/blob/main/scripts/wrappergen)   | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
+| [wrappengen](https://github.com/lheywang/Simker/blob/main/scripts/wrappergen)     | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
 
 And finally some ressources to build higher level tests :
-| Rssource                             | Description                                                                                                  |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| Rssource                                                                                                           | Description                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | [/tools/include/verilator/testbench.h](https://github.com/lheywang/Simker/blob/main/include/verilator/testbench.h) | A class to provide higher level of abstraction to verilator, and perform testbench controls and assertions ! |
 
 > [!NOTE]
@@ -164,7 +164,7 @@ Any computer that as enough RAM to run a docker and some basic tools will work.
 | ------------- | ------------------------------------------------------------------------------------------- |
 | Minimal       | Any cpu built in the last decade and 16 GB of RAM. About 10 GB of free storage is required. |
 | Recommended   | Any CPU with at least 8 cores and 16 GB or RAM. About 15 GB of SSD available                |
-| Ideal         | Any CPU with at least 10-12 cores and 32 GB of RAM. About 20 GB of NVMe drive available.       |
+| Ideal         | Any CPU with at least 10-12 cores and 32 GB of RAM. About 20 GB of NVMe drive available.    |
 
 > [!WARNING]
 > Theses recommendations are built on my own tests. Theses are more for reference rather than real hard limit.
