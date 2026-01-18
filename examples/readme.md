@@ -21,3 +21,6 @@ And you still can see the source to understand how that was built !
 
 As you may seen, the last one is the more interessting because it include all of the options, and perform a large mixed signals simulation.
 If you're familiar with SPICE simulations, you may want to skip others to directly look at it !
+
+For each simulations, you'll get images and videos that show the different steps to proceed !
+That make things a bit easier for beginners !

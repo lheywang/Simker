@@ -116,52 +116,7 @@ I have included a help system to get you started immediately.
 The Simker CLI
 Just type simker at any time to see the welcome screen and status:
 
-```
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%             ███████╗██╗███╗   ███╗██╗  ██╗███████╗██████╗     ██╗           %
-%             ██╔════╝██║████╗ ████║██║ ██╔╝██╔════╝██╔══██╗    ██║           %
-%             ███████╗██║██╔████╔██║█████╔╝ █████╗  ██████╔╝    ██║           %
-%             ╚════██║██║██║╚██╔╝██║██╔═██╗ ██╔══╝  ██╔══██╗    ╚═╝           %
-%             ███████║██║██║ ╚═╝ ██║██║  ██╗███████╗██║  ██║    ██╗           %
-%             ╚══════╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝           %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-% Welcome on the SIMKER Docker container. You can now begin creatin           %
-%   electronics for tomorrow !                                                %
-%                                                                             %
-% There's plenty of tools built-in, such as :                                 %
-%   - SPICE simulator :                      NGSPICE                          %
-%   - VHDL simulator :                       GHDL                             %
-%   - Verilog / SystemVerilog simulator :    VERILATOR                        %
-%   - VerilogA :                             OPENVAF-R                        %
-%   - Digital waveform viewer :              GTKWAVE                          %
-%   - Analog waveform viewer :               GAW                              %
-%   - Schematic capture :                    XSCHEM                           %
-%                                                                             %
-% But that's not all ! There's also some usefull scripts, also included !     %
-%  - vhdl2verilog :                          Convert a VHDL file into a       %
-%                                              verilog one !                  %
-%  - wrappergen :                            Build XSCHEM sybmols from        %
-%                                              verilog(a) sources !           %
-%                                                                             %
-% And, some helper files to build more advanced tests :                       %
-%  - testbench.h                             Create a verilator helper class  %
-%                                              to help during assertions and  %
-%                                              and testbench controls.        %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-% All of the tools can be used from that command line input. And, if you need %
-%  some help, you can always type "simker" to show this message, as           %
-%  well as simker_help [tool name] to get more specific help !                %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                             %
-% Leonard HEYWANG <leonard.heywang@proton.me>                                 %
-%   03/01/2026                                                                %
-%                                                                             %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-```
+![](https://github.com/lheywang/Simker/blob/main/images/welcome.gif)
 
 ### Tool Specific Help :
 
@@ -172,27 +127,10 @@ General Help: Type
 
 ```sh
 simker_help
-```
-
-Specific Tool Help: Type
-
-```sh
 simker_help [tool_name]
 ```
 
-Example:
-
-```sh
-simker_help ngspice
-...
-simker_help ghdl
-```
-
-Check Versions: Type
-
-```sh
-simker_help versions
-```
+![](https://github.com/lheywang/Simker/blob/main/images/help.gif)
 
 > [!NOTE]
 > For the even more nerd users, there's also man pages for the different tools (built by the developper, or custom ones).

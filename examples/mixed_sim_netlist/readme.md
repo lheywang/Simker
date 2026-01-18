@@ -11,6 +11,8 @@ The circuit is by itself quite simple :
 
 That's a clock, followed by a divider (factor 2), and then, a four bit counter. Each output is wired to an RC filter.
 
+![](https://github.com/lheywang/Simker/blob/main/images/mixed_sim_netlist/mixed_sim_netlist.png)
+
 ## Running it ?
 
 # digital Verilog example
@@ -34,3 +36,5 @@ Rapidly an analog viewer will be openned for you showing the waveforms, in this 
 - RC output, LSB of counter
 - Clock
 - Reset
+
+![](https://github.com/lheywang/Simker/blob/main/images/mixed_sim_netlist/mixed_sim_netlist.gif)
