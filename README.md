@@ -40,26 +40,26 @@ Simker comes with industry-standard open-source EDA tools:
 
 | Category              | Tool       | Description                                                                 |
 | --------------------- | ---------- | --------------------------------------------------------------------------- |
-| SPICE Simulation      | NGSPICE    | The standard for open-source analog circuit simulation.                     |
-| VHDL Simulation       | GHDL       | Fast VHDL simulator (GCC backend).                                          |
-| Verilog/SystemVerilog | Verilator  | The fastest Verilog/SystemVerilog simulator.                                |
-| Verilog-A             | OpenVAF-R  | Verilog-A compiler for compact model / custom analog functions integration. |
-| Schematic Capture     | XSchem     | Hierarchical schematic capture for VLSI/mixed-signal.                       |
-| Digital Viewer        | GTKWave    | Fully featured wave viewer.                                                 |
-| Analog Viewer         | GAW        | Gtk Analog Wave viewer for displaying signals.                              |
-| Terminal              | oh-my-posh | A better terminal than the default one in docker                            |
+| SPICE Simulation      | [NGSPICE](https://ngspice.sourceforge.io/)    | The standard for open-source analog circuit simulation.                     |
+| VHDL Simulation       | [GHDL](https://github.com/ghdl/ghdl)       | Fast VHDL simulator (GCC backend).                                          |
+| Verilog/SystemVerilog | [Verilator](https://github.com/verilator/verilator)  | The fastest Verilog/SystemVerilog simulator.                                |
+| Verilog-A             | [OpenVAF-R](https://github.com/OpenVAF/OpenVAF-Reloaded)  | Verilog-A compiler for compact model / custom analog functions integration. |
+| Schematic Capture     | [XSCHEM](https://xschem.sourceforge.io/stefan/index.html)     | Hierarchical schematic capture for VLSI/mixed-signal.                       |
+| Digital Viewer        | [GTKWave](https://gtkwave.sourceforge.net/)    | Fully featured wave viewer.                                                 |
+| Analog Viewer         | [GAW](https://github.com/StefanSchippers/xschem-gaw)        | Gtk Analog Wave viewer for displaying signals.                              |
+| Terminal              | [oh-my-posh](https://ohmyposh.dev/) | A better terminal than the default one in docker                            |
 
 And some custom utilities to link theses tools :
 
 | Tool         | Description                                                                                                       |
 | ------------ | ----------------------------------------------------------------------------------------------------------------- |
-| vhdl2verilog | A script to convert VHDL files into Verilog. Based on the GHDL synth features !                                   |
-| wrappengen   | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
+| [vhdl2verilog](https://github.com/lheywang/Simker/blob/main/scripts/vhdl2verilog) | A script to convert VHDL files into Verilog. Based on the GHDL synth features !                                   |
+| [wrappengen](https://github.com/lheywang/Simker/blob/main/scripts/wrappergen)   | A wrapper generator to generate XSCHEM symbols from digital or analog logic. Usefull when integrating mixed sim ! |
 
 And finally some ressources to build higher level tests :
 | Rssource                             | Description                                                                                                  |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| /tools/include/verilator/testbench.h | A class to provide higher level of abstraction to verilator, and perform testbench controls and assertions ! |
+| [/tools/include/verilator/testbench.h](https://github.com/lheywang/Simker/blob/main/include/verilator/testbench.h) | A class to provide higher level of abstraction to verilator, and perform testbench controls and assertions ! |
 
 > [!NOTE]
 > And, what's even better ? Simker come with an integrated X11 server, thus, GUI apps will work out of the box !
@@ -150,7 +150,7 @@ The steps are :
 3. Launch NGSPICE and wait !
 4. See the results, and iterate if needed.
 
-And, don't forget : There's a lot of examples, available in the /example in the container, or in the repo ! Go take a look at them !
+And, don't forget : There's a lot of ![examples](https://github.com/lheywang/Simker/tree/main/examples#examples), available in the /example in the container ! Go take a look at them !
 They show near all of the available workflows.
 
 ## Hardware recommendations :
@@ -164,27 +164,41 @@ Any computer that as enough RAM to run a docker and some basic tools will work.
 | ------------- | ------------------------------------------------------------------------------------------- |
 | Minimal       | Any cpu built in the last decade and 16 GB of RAM. About 10 GB of free storage is required. |
 | Recommended   | Any CPU with at least 8 cores and 16 GB or RAM. About 15 GB of SSD available                |
-| Ideal         | Any CPU with at least 10 cores and 32 GB of RAM. About 20 GB of NVMe drive available.       |
+| Ideal         | Any CPU with at least 10-12 cores and 32 GB of RAM. About 20 GB of NVMe drive available.       |
 
 > [!WARNING]
 > Theses recommendations are built on my own tests. Theses are more for reference rather than real hard limit.
+> It could be possible to successfully pass the build phase on much inferior devices, I ... just don't know how low you can go !
 
 >[!NOTE]
-> The build process will try to use 8 cores (if available). You may see slowdown for computer with less than 8 cores.
+> The build process will try to use 8 cores (if available). You may see slowdown for computer with 8 cores or less due to the high CPU usage.
+> This is capped as a parameter in the Dockerfile since I didn't see any major speedup by using all of them.
+
+> [!NOTE]
+> If some of you want, you can submit me your working configs to update theses lists ! 
+> Here the [link](https://github.com/lheywang/Simker?tab=readme-ov-file#contributing-and-support-) 
 
 ## Software recommendations : 
 
 ### Linux OS : 
-I tested this tool on fedora 42 and 43, as well as Ubuntu 25.04. Both of them works nice, even if the SELinux policy is maxed (as my fedora 43 on my laptop).
-This is the recommended platform.
+I personnally tested this container on my [Fedora](https://www.fedoraproject.org/fr/) 43 laptop. It's working fine. 
+As I don't have other computers that runs Linux, I can't test it on other platforms.
 
 ### Windows OS :
-While there's no restrictions about it, I don't tested it. I tested the tool in fedora 42 and 43 within WSL VM, which is something I highly recommend.
+While there's no restrictions about it, I don't tested running it in native Windows docker tool. 
+
+I tested the tool in fedora 42 and 43 within WSL VM, which is something I highly recommend.
 I don't plan to really develop nor test in plain Windows system.
 
 ### Mac OS : 
 Finally, I don't tested it in any form under macOS. And, I don't planned to test it someday.
 There's no restriction about running docker container on theses tools, so, it shall work without too much hassle, but... I don't know.
+
+---
+
+> [!NOTE]
+> If some of you want, you can submit me your working configs to update theses lists ! 
+> Here the [link](https://github.com/lheywang/Simker?tab=readme-ov-file#contributing-and-support-) 
 
 ## Known limitations :
 
@@ -204,18 +218,16 @@ Project initiated: 03/01/2026
 
 Distributed under the GNU GPL 3.0 License. See LICENSE for more information.
 
-> [!WARNING]
-> If you encounter "Error: cannot open display", please ensure your X11 forwarding is configured correctly on your host machine.
-
 ## Contributing and support :
 
 As a you may have seen, I'm still a student, so, this project is developped as a side project. This mean there may be period of
 inactivity. Even if I tried as hard as I could, don't expect patches to be available within professional delays.
 
-If you think, you may be contributing to it, I'm open to any form of help.
+For any help / question request, you may contact me by email, or, via the platform you discovered this tool, if I was the OP.
 
-For any help request, you may contact me by email, or, via the platform you discovered this tool, if I was the OP.
+I don't have any form of paypal / financial support, as I don't want it. 
+The greatest form of support may be starring this on github, or, even better : Trying to commit changes to this project !
 
-I don't have any form of paypal / financial support, as I don't want it. The greatest form of support may be starring this on github !
+If you have time, and want to, I'm totally open to push requests !
 
 Thanks by advance !
