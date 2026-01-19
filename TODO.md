@@ -8,6 +8,7 @@
 
 ### To add : 
 - Uninstall script (remove docker images + delete the local folder)
+- Tutorials to setup a project / simulations
 
 ### To change : 
 - Make the git repo proper for usage (dev branche, stable branch...) + permissions on who can push and so on...
