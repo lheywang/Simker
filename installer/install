@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# --- Configuration ---
+APP_NAME="simker"
+# Standard Linux location for user-specific apps
+INSTALL_DIR="$HOME/.local/share/$APP_NAME"
+CONFIG_DIR="$HOME/.config/$APP_NAME"
+BIN_DIR="$HOME/.local/bin"
+
+# --- Colors ---
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo -e "${BLUE}=== Installing $APP_NAME System-Wide ===${NC}"
+
+# 1. Clean previous installs
+if [ -d "$INSTALL_DIR" ]; then
+    echo -e "${BLUE}[1/6] Removing old installation...${NC}"
+    rm -rf "$INSTALL_DIR"
+fi
+
+# 2. Copy Source Code to Safe Location
+echo -e "${BLUE}[2/6] Installing source code to $INSTALL_DIR...${NC}"
+mkdir -p "$INSTALL_DIR"
+rsync -av --progress . "$INSTALL_DIR" --exclude .git --exclude .vscode --exclude tmp
+echo -e "${GREEN}      Source code installed.${NC}"
+
+# 3. Build Docker Image (FROM the safe location)
+echo -e "${BLUE}[3/6] Building Docker Image...${NC}"
+cd "$INSTALL_DIR" || exit 1
+docker build -t "$APP_NAME" .
+if [ $? -ne 0 ]; then
+    echo -e "${RED}[ERROR] Docker build failed.${NC}"
+    exit 1
+fi
+
+# 4. Setup Config & Docker Compose
+echo -e "${BLUE}[4/6] Configuring launcher...${NC}"
+mkdir -p "$CONFIG_DIR"
+
+# 5. Inject the robust Alias
+echo -e "${BLUE}[5/6] Updating Shell Configuration...${NC}"
+
+SHELL_FUNC="
+# --- SIMKER START ---
+function simker() {
+    local current_work_dir=\"\$(pwd)\"
+
+    #    PROJECT_DIR=... tells Docker what volume to mount
+    PROJECT_DIR=\"\$current_work_dir\" docker-compose \\
+        -f \"$INSTALL_DIR/docker-compose.yml\" \\
+        --project-directory \"$INSTALL_DIR\" \\
+        run --rm $APP_NAME \"\$@\"
+}
+# --- SIMKER END ---
+"
+
+# Detect Shell
+TARGET_RC="$HOME/.bashrc"
+[ -n "$ZSH_VERSION" ] && TARGET_RC="$HOME/.zshrc"
+
+# Remove old function if exists (simple grep check)
+# Ideally, you'd use sed to remove the old block, but for now appending is safer
+# unless you want to get fancy with sed.
+if ! grep -q "SIMKER START" "$TARGET_RC"; then
+    echo "$SHELL_FUNC" >> "$TARGET_RC"
+    echo -e "${GREEN}      Shell alias installed.${NC}"
+else
+    echo -e "${BLUE}      Shell alias already exists. Please restart terminal to apply updates.${NC}"
+    echo -e "${BLUE}      If you were reinstalling the tool, please delete it before to enable path updates.${NC}"
+fi
+
+# 5. Configure display options
+echo -e "${BLUE}[6/6] Configuring display elements ...${NC}"
+xhost +local:docker
+
+echo -e "${BLUE}=== Installation Complete! ===${NC}"
+echo -e "The tool is installed in: ${GREEN}$INSTALL_DIR${NC}"
+echo -e "Please run: ${GREEN}source $TARGET_RC${NC}"
