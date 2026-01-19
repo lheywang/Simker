@@ -24,7 +24,7 @@ And we want to connect them in the following way :
 
 The modules exposes theses pins :
 
-clk_div : 
+clk_div.vhd : 
 ```verilog
 entity clk_div is
     port ( 
