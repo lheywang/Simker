@@ -1,0 +1,71 @@
+#!/bin/env python3
+# -----------------------------------------------------------------------------------------
+# leonard heywang <leonard.heywang@proton.me>
+# 19-01-2026
+#
+# An installer tool, to remove Simker from your computer
+# -----------------------------------------------------------------------------------------
+
+import subprocess
+import shlex
+import pathlib
+
+def remove_containers() -> None:
+
+
+    # Creating the command to be runned :
+    tool = "docker images"
+    print(f"Running : {tool}")
+
+    # Prepare args and run the command
+    args = shlex.split(tool)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, errors = p.communicate()
+
+    lines = output.decode().split("\n")
+
+    ID = []
+    for line in lines:
+        if "simker" in line:
+            tokens = list(filter(None, [token.strip() for token in line.split(" ")]))
+            ID.append(tokens[1])
+
+    if len(ID) == 0:
+        print("Nothing to delete...")
+        return
+
+    tool = f"docker image rm {str(*ID)}"
+    print(f"Running : {tool}")
+
+    # Prepare args and run the command
+    args = shlex.split(tool)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, errors = p.communicate()
+
+    print(output.decode())
+    print(errors.decode())
+
+    return
+
+def remove_files() -> None: 
+    file = pathlib.Path(__file__)
+    directory = file.joinpath("../../").resolve()
+
+    def rmdir(directory):
+        tmp = pathlib.Path(directory)
+        for item in tmp.iterdir():
+            if item.is_dir():
+                rmdir(item)
+            else:
+                item.unlink()
+        tmp.rmdir()
+
+    rmdir(directory)
+
+if __name__ == "__main__":
+    print("Deleting Simker...")
+
+    remove_containers()
+    remove_files()
+
+    print("Finished removing Simker !")
