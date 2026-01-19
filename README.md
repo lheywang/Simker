@@ -108,6 +108,8 @@ simker
 The tool will mount your actual location into the /workspace of the tool.
 Just go into your project directoty, launch the container and let's develop !
 
+![](https://github.com/lheywang/Simker/blob/main/images/welcome.png)
+
 ## Usage & Help System 📖 :
 
 Simker was designed to be the easiest to use and setup, even for beginners !
