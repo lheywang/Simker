@@ -188,7 +188,7 @@ Since this tool is based on Docker, there shall not be particular restrictions o
 As I don't have enough machine and time, Simker was only tested on : 
 
 - [Fedora](https://www.fedoraproject.org/) 43
-- Windows 11 via WSL2 [Fedora](https://www.fedoraproject.org/) 42 and 43
+- Windows 11 via [WSL2](https://learn.microsoft.com/fr-fr/windows/wsl/about) [Fedora](https://www.fedoraproject.org/) 42 and 43
 
 All of theses are working perfectly.
 
