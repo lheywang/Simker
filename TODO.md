@@ -7,8 +7,7 @@
 - Customize a bit more the impedance curve of the speaker model
 
 ### To add : 
-- Make screen, gifs and so on about the tool to show how does that work
-- Add images on the different readme.md files
+- Uninstall script (remove docker images + delete the local folder)
 
 ### To change : 
 - Make the git repo proper for usage (dev branche, stable branch...) + permissions on who can push and so on...
