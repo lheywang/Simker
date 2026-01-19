@@ -76,7 +76,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 
 # Run the installer script
-./installer/install.sh
+./installer/install
 ```
 
 ![](https://github.com/lheywang/Simker/blob/main/images/installer.gif)
@@ -154,6 +154,7 @@ The steps are :
 
 And, don't forget : There's a lot of ![examples](https://github.com/lheywang/Simker/tree/main/examples#examples), available in the /example in the container ! Go take a look at them !
 They show near all of the available workflows.
+If you prefer standard, written tutorials, you can look here ![examples](https://github.com/lheywang/Simker/tree/main/tutorials) !
 
 ## Hardware recommendations :
 
