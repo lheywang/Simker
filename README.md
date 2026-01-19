@@ -182,19 +182,15 @@ Any computer that as enough RAM to run a docker and some basic tools will work.
 
 ## Software recommendations : 
 
-### Linux OS : 
-I personnally tested this container on my [Fedora](https://www.fedoraproject.org/fr/) 43 laptop. It's working fine. 
-As I don't have other computers that runs Linux, I can't test it on other platforms.
+Since this tool is based on Docker, there shall not be particular restrictions on the host platform.
+[Linux](https://docs.docker.com/desktop/setup/install/linux/) | [Windows](https://docs.docker.com/desktop/setup/install/windows-install/) | [MacOS](https://docs.docker.com/desktop/setup/install/mac-install/)
 
-### Windows OS :
-While there's no restrictions about it, I don't tested running it in native Windows docker tool. 
+As I don't have enough machine and time, Simker was only tested on : 
 
-I tested the tool in fedora 42 and 43 within WSL VM, which is something I highly recommend.
-I don't plan to really develop nor test in plain Windows system.
+- [Fedora](https://www.fedoraproject.org/) 43$
+- Windows 11 via WSL2 [Fedora](https://www.fedoraproject.org/) 42 and 43
 
-### Mac OS : 
-Finally, I don't tested it in any form under macOS. And, I don't planned to test it someday.
-There's no restriction about running docker container on theses tools, so, it shall work without too much hassle, but... I don't know.
+All of theses are working perfectly.
 
 ---
 
