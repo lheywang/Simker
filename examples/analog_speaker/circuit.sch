@@ -15,7 +15,6 @@ N 150 70 150 100 {lab=GND}
 N 210 80 210 100 {lab=GND}
 N 210 -10 210 70 {lab=GND}
 N 150 -10 210 -10 {lab=GND}
-C {speaker.sym} 70 0 0 0 {name=Xspeaker1}
 C {devices/vsource.sym} -110 50 0 0 {name=V1 
 value="0 AC 1" 
 savecurrent=false}
@@ -39,3 +38,4 @@ value="
   plot -(v(spkp)/i(V1))
 .endc
 "}
+C {speaker.sym} 70 0 0 0 {}

@@ -4,51 +4,131 @@
 module speaker(
         input p, 
         output n, 
-        output x_mon
+        output x_mon // V/m
 );     
+
     electrical p;
     electrical n;
     electrical x_mon;
 
-    // --- Parameters ---
-    parameter real Re  = 6.0;      
-    parameter real Le  = 1.0m;     
-    parameter real Bl  = 8.0;      
-    parameter real Mms = 30.0m;    
-    parameter real Cms = 0.5m;     
-    parameter real Rms = 2.0;      
-    parameter real Xmax = 5.0m;    
-    parameter real K_lim = 1000.0; 
+    // =========================
+    // MODEL PARAMETERS 
+    // =========================
 
-    // --- Variables ---   
-    real x_pos;
-    real v_vel;   
-    real i_coil;
-    real back_emf;
-    real f_spring;     
-    real displacement_factor;
+    // Specs
+    parameter real Pnom     = 80;
+    parameter real Pmax     = 110;
 
-    kinematic k;
+    // Base parameters :
+    parameter real Sd       = 346e-3; 
+    parameter real Mms      = 33;
+    parameter real Le       = 0.8e-3;
+    parameter real Re       = 5.9;
+    parameter real Bl       = 3.8;
+
+    // Small signal parameter
+    parameter real Fs       = 34;
+    parameter real Qes      = 2.92;
+    parameter real Qms      = 2.82;
+    parameter real Qts      = 1.43;
+    parameter real Vas      = 113;
+
+    parameter real Kms_fac  = 50; // non linear factor.
+
+    // Data
+    parameter real Flux     = 1;
+    parameter real Xmax     = 6;
+    parameter real Xmin     = -6;
+    parameter real Ebp      = 12;
+
+    // Coil
+    parameter real Dcoil    = 25.4 * 0.98;
+    parameter real Hcoil    = 15;
+    parameter real Hsep     = 4;
+
+    // =========================
+    // PHYSICAL PARAMETERS
+    // =========================
+
+    // Constants
+    parameter real CopperAlpha = 3.93e-3;
+
+    // Thermal
+    parameter real Tamb = 22;
+    parameter real R_th = 2;
+    parameter real C_th = 10;
+
+    // =========================
+    // MODEL VARIABLES
+    // =========================
+
+    // Physical nodes
+    kinematic mech_node; // moving part of the speaker
+    thermal thermal_node; // thermal mass
+
+    // electrical
+    real curr;
+    real ReD;
+
+    // mechanical
+    real vel;
+    real pos;
+
+    // thermal
+    real rise;
+    real temperature;
+
+    // Soft defined parameters
+    parameter real Rms = (2 * `M_PI * Fs * Mms) / (Qms);
+    parameter real Kms = Mms * pow((2 * `M_PI * Fs), 2);
 
     analog begin
-        // --- Physics Calculations ---
-        i_coil = I(p, n);
-        x_pos = Pos(k);
-        v_vel= ddt(x_pos);
 
-        displacement_factor = 1.0 + K_lim * pow(x_pos / Xmax, 4);
-        f_spring = (x_pos / Cms) * displacement_factor;
+        // =========================
+        // MODEL EQUATIONS
+        // =========================
 
-        F(k) <+ Mms * ddt(v_vel) + Rms * v_vel + f_spring;
-        F(k) <+ -1 * Bl * i_coil; 
-        
-        back_emf = Bl * v_vel;
-        V(p, n) <+ i_coil * Re + ddt(i_coil * Le) + back_emf;
-        
-        // --- Monitor Assignment ---
-        // We force the voltage on pin x_mon to equal the position 'pos'
-        // Result: 5V on this pin = 5mm of cone excursion.
-        V(x_mon) <+ x_pos * 1000; 
-        
+        // First, get some data
+        curr = I(p, n);
+        pos = Pos(mech_node);
+        vel = ddt(pos);
+        temperature = Temp(thermal_node);
+
+        // -------------------------
+        // Thermal domain
+        // -------------------------
+        // Compute the actual Re value, dependeding on temperature
+        ReD = Re * (1 + CopperAlpha *  temperature);
+
+        // Update the thermal node with the new values
+        Pwr(thermal_node) <+ -1 * (curr * curr * ReD);
+        Pwr(thermal_node) <+ temperature / R_th;
+        Pwr(thermal_node) <+ ddt(C_th * temperature);
+        Pwr(thermal_node) <+ -1 * Tamb;
+
+        // -------------------------
+        // Electrical domain
+        // -------------------------
+        V(p, n) <+ curr * ReD;
+        V(p, n) <+ ddt(Le * curr);
+        V(p, n) <+ Bl * vel;
+
+        // -------------------------
+        // Mechanical domain
+        // -------------------------
+        // Driving force
+        F(mech_node) <+ -1 * (Bl * curr);
+
+        // Reaction forces
+        F(mech_node) <+ ddt(Mms *  vel);
+        F(mech_node) <+ Rms * vel;
+        F(mech_node) <+ (Kms * pos) +  (Kms * pos * pos * pos);
+
+        // -------------------------
+        // Monitoring output
+        // -------------------------
+        V(x_mon) <+ pos;
+
     end
+
 endmodule

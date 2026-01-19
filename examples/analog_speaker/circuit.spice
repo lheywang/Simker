@@ -1,0 +1,23 @@
+** sch_path: /workspace/circuit.sch
+**.subckt circuit
+V1 spkp GND 0 AC 1
+R1 vmon GND 1M m=1
+X1 spkp GND vmon speaker
+**** begin user architecture code
+
+
+
+.control
+  ac dec 2000 1 40k
+  plot -(v(spkp)/i(V1))
+.endc
+
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  speaker.sym # of pins=3
+** sym_path: /workspace/speaker.sym
+.include /workspace/speaker.spice
+.GLOBAL GND
+.end
