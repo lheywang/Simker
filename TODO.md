@@ -3,13 +3,8 @@
 ## Examples
 
 ### Patchs :
-- Finish speaker impedance example, and run FFT over it. 
-- Customize a bit more the impedance curve of the speaker model
-- Correct the analog wrappergen mode which block with constants
 
 ### To add : 
-- Uninstall script (remove docker images + delete the local folder)
-- Tutorials to setup a project / simulations
 
 ### To change : 
 - Make the git repo proper for usage (dev branche, stable branch...) + permissions on who can push and so on...
