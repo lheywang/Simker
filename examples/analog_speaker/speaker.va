@@ -1,134 +1,114 @@
 `include "disciplines.h"
 `include "constants.h"
 
-module speaker(
-        input p, 
-        output n, 
-        output x_mon // V/m
-);     
+module speaker(input p, input n, output x_mon);
 
-    electrical p;
-    electrical n;
-    electrical x_mon;
+    electrical p, n, x_mon;
+    
+    kinematic mech_node; 
+    thermal thermal_node; 
 
     // =========================
-    // MODEL PARAMETERS 
+    // 1. DATASHEET PARAMETERS 
     // =========================
-
-    // Specs
-    parameter real Pnom     = 80;
-    parameter real Pmax     = 110;
-
-    // Base parameters :
-    parameter real Sd       = 346e-3; 
-    parameter real Mms      = 33;
-    parameter real Le       = 0.8e-3;
-    parameter real Re       = 5.9;
-    parameter real Bl       = 3.8;
-
-    // Small signal parameter
-    parameter real Fs       = 34;
-    parameter real Qes      = 2.92;
-    parameter real Qms      = 2.82;
-    parameter real Qts      = 1.43;
-    parameter real Vas      = 113;
-
-    parameter real Kms_fac  = 50; // non linear factor.
-
-    // Data
-    parameter real Flux     = 1;
-    parameter real Xmax     = 6;
-    parameter real Xmin     = -6;
-    parameter real Ebp      = 12;
-
-    // Coil
-    parameter real Dcoil    = 25.4 * 0.98;
-    parameter real Hcoil    = 15;
-    parameter real Hsep     = 4;
-
-    // =========================
-    // PHYSICAL PARAMETERS
-    // =========================
-
-    // Constants
-    parameter real CopperAlpha = 3.93e-3;
-
+    parameter real Mms_g     = 33.0; 
+    parameter real Fs        = 34.0;
+    parameter real Qms       = 2.82;
+    parameter real Bl        = 3.8;
+    parameter real Re        = 5.9;
+    parameter real Le        = 0.8e-3;
+    
     // Thermal
-    parameter real Tamb = 22;
-    parameter real R_th = 2;
-    parameter real C_th = 10;
+    parameter real Tamb      = 22.0; // Celsius
+    parameter real R_th      = 2.0;
+    parameter real C_th      = 10.0;
+    parameter real Alpha_Cu  = 0.00393;
+
+    // Non-linear stiffness (Soft Clipping)
+    parameter real Kms_stiff_factor = 500; 
 
     // =========================
-    // MODEL VARIABLES
+    // 2. INTERNAL VARIABLES
     // =========================
+    real M_si, R_si, K_si; // SI Unit versions
+    real w0;
+    
+    real i_coil, v_coil;
+    real x, v;
+    real temp_val, Re_dynamic;
+    real spring_force;
 
-    // Physical nodes
-    kinematic mech_node; // moving part of the speaker
-    thermal thermal_node; // thermal mass
+    // =========================
+    // 3. INITIALIZATION (Calculate Once)
+    // =========================
+    analog initial begin
+        // A. Unit Conversion (Grams -> Kg)
+        M_si = Mms_g * 1e-3; 
 
-    // electrical
-    real curr;
-    real ReD;
-
-    // mechanical
-    real vel;
-    real pos;
-
-    // thermal
-    real rise;
-    real temperature;
-
-    // Soft defined parameters
-    parameter real Rms = (2 * `M_PI * Fs * Mms) / (Qms);
-    parameter real Kms = Mms * pow((2 * `M_PI * Fs), 2);
-
-    analog begin
-
-        // =========================
-        // MODEL EQUATIONS
-        // =========================
-
-        // First, get some data
-        curr = I(p, n);
-        pos = Pos(mech_node);
-        vel = ddt(pos);
-        temperature = Temp(thermal_node);
-
-        // -------------------------
-        // Thermal domain
-        // -------------------------
-        // Compute the actual Re value, dependeding on temperature
-        ReD = Re * (1 + CopperAlpha *  temperature);
-
-        // Update the thermal node with the new values
-        Pwr(thermal_node) <+ -1 * (curr * curr * ReD);
-        Pwr(thermal_node) <+ temperature / R_th;
-        Pwr(thermal_node) <+ ddt(C_th * temperature);
-        Pwr(thermal_node) <+ -1 * Tamb;
-
-        // -------------------------
-        // Electrical domain
-        // -------------------------
-        V(p, n) <+ curr * ReD;
-        V(p, n) <+ ddt(Le * curr);
-        V(p, n) <+ Bl * vel;
-
-        // -------------------------
-        // Mechanical domain
-        // -------------------------
-        // Driving force
-        F(mech_node) <+ -1 * (Bl * curr);
-
-        // Reaction forces
-        F(mech_node) <+ ddt(Mms *  vel);
-        F(mech_node) <+ Rms * vel;
-        F(mech_node) <+ (Kms * pos) +  (Kms * pos * pos * pos);
-
-        // -------------------------
-        // Monitoring output
-        // -------------------------
-        V(x_mon) <+ pos;
-
+        // B. Calculate Mechanical Parameters from Fs/Qms
+        w0   = 2.0 * `M_PI * Fs;
+        
+        // Stiffness K = M * w^2
+        K_si = M_si * w0 * w0;
+        
+        // Damping R = (M * w) / Qms
+        R_si = (M_si * w0) / Qms;
+        
+        // Debug print to verify standard values
+        $strobe("Speaker Init: M=%.4f kg, K=%.2f N/m, R=%.4f", M_si, K_si, R_si);
     end
 
+    // =========================
+    // 4. RUNTIME BEHAVIOR
+    // =========================
+    analog begin
+        // --- READ SENSORS ---
+        i_coil   = I(p, n);
+        x        = Pos(mech_node);
+        v        = ddt(x);
+        temp_val = Temp(thermal_node);
+
+        // --- THERMAL DOMAIN ---
+        // 1. Update Resistance based on Temp Rise
+        // Note: Temp(thermal_node) is usually absolute rise or relative. 
+        // Let's assume the node represents "Temperature Rise above Ambient".
+        Re_dynamic = Re * (1 + Alpha_Cu * temp_val);
+
+        // 2. Heat Generation (Power In)
+        // P = I^2 * R
+        Pwr(thermal_node) <+ -1 * (i_coil * i_coil * Re_dynamic);
+
+        // 3. Cooling (Leakage to Ambient)
+        // Flow = (T_rise) / R_thermal
+        Pwr(thermal_node) <+ temp_val / R_th;
+        
+        // 4. Thermal Mass (Storage)
+        Pwr(thermal_node) <+ C_th * ddt(temp_val);
+
+
+        // --- ELECTRICAL DOMAIN ---
+        V(p, n) <+ i_coil * Re_dynamic; // Resistor
+        V(p, n) <+ ddt(Le * i_coil);    // Inductor
+        V(p, n) <+ Bl * v;              // Back EMF
+
+
+        // --- MECHANICAL DOMAIN ---
+        // 1. Non-linear Spring Force Calculation
+        // F = Kx + K_nonlin * x^3
+        spring_force = (K_si * x) + (Kms_stiff_factor * K_si * x * x * x);
+
+        // 2. Newton's Law Summation
+        // Driving Force
+        F(mech_node) <+ -1 * (Bl * i_coil);
+
+        // Reaction Forces
+        F(mech_node) <+ ddt(M_si * v); // Mass
+        F(mech_node) <+ R_si * v;      // Damping
+        F(mech_node) <+ spring_force;  // Spring
+
+
+        // --- MONITOR OUTPUT ---
+        // Output position in mm for easier reading on graph
+        V(x_mon) <+ x * 1000.0; 
+    end
 endmodule

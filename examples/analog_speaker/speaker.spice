@@ -1,9 +1,0 @@
-
-.control
-  pre_osdi speaker.osdi
-.endc
-
-.subckt speaker speaker_p speaker_n speaker_x_mon
-  .Model speaker_model speaker
-  N1 speaker_p speaker_n speaker_x_mon speaker_model
-.ends
