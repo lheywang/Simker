@@ -25,13 +25,11 @@ Really fine for personnal projects, as I do, but, you can't thrust them as you m
 
 ## Key Features⚡:
 
-- Zero-Dependency Setup: Run complex EDA tools without cluttering your host OS.
+- Zero-Dependency Setup: Run complex EDA tools without cluttering your host OS. Everything is here, from install.
 
-- Mixed-Signal Capable: Seamlessly handle Analog (SPICE) and Digital (HDL) workflows.
+- Mixed-Signal Capable: Seamlessly handle Analog (SPICE) and Digital (HDL) workflows with the usage of tools and scripts.
 
-- Built-in Utilities: Custom scripts to bridge the gap between different HDL formats.
-
-- Interactive Help: A custom CLI help system to guide you through the tools.
+- Built-in Utilities: Custom scripts to bridge the gap between different HDL formats and make the mixed-simulation a feature, not a pain.
 
 - Compatible with a large panel of OS : Since it's inside a docker container, which run Ubuntu 24.04,
   you can basically deploy the tool on any OS that support docker.
