@@ -5,7 +5,6 @@
 ### Patchs :
 
 ### To add : 
-- Gifs of the analog simulation
 
 ### To change : 
 - Make the git repo proper for usage (dev branche, stable branch...) + permissions on who can push and so on...
