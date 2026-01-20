@@ -24,7 +24,7 @@ fi
 # 2. Copy Source Code to Safe Location
 echo -e "${BLUE}[2/6] Installing source code to $INSTALL_DIR...${NC}"
 mkdir -p "$INSTALL_DIR"
-rsync -av --progress . "$INSTALL_DIR" --exclude .git --exclude .vscode --exclude tmp
+rsync -av --progress . "$INSTALL_DIR" --exclude .git --exclude .vscode --exclude tmp --exlude images
 echo -e "${GREEN}      Source code installed.${NC}"
 
 # 3. Build Docker Image (FROM the safe location)
