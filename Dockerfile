@@ -393,12 +393,14 @@ RUN python3 setup.py install
 RUN mkdir -p /tools/scripts
 RUN mkdir -p /tools/doc
 RUN mkdir -p /tools/include
+RUN mkdir -p /tools/config
 RUN mkdir -p /workspace
 RUN mkdir -p /examples
 
 # Import scripts and other files
 COPY ./scripts /tools/scripts
 COPY ./include /tools/include
+COPY ./config /tools/config
 COPY ./doc /tools/doc
 COPY ./examples /examples
 
